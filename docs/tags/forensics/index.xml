@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>forensics on fiskeren.github.io</title>
+    <link>https://fiskeren.github.io/tags/forensics/</link>
+    <description>Recent content in forensics on fiskeren.github.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-uk</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 22 May 2022 09:45:02 +0100</lastBuildDate><atom:link href="https://fiskeren.github.io/tags/forensics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deadhost Investigation and Super Timeline</title>
+      <link>https://fiskeren.github.io/posts/deadhostinvestigation/</link>
+      <pubDate>Sun, 22 May 2022 09:45:02 +0100</pubDate>
+      
+      <guid>https://fiskeren.github.io/posts/deadhostinvestigation/</guid>
+      <description>I recently attended a SANS 508 course and got time to play around with Velociraptor, which is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artifact collector.
+In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executable as a artefact collector to quickly collect Windows artefacts from a dead host image.</description>
+    </item>
+    
+  </channel>
+</rss>
