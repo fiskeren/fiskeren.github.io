@@ -48,7 +48,7 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <p><img src="/img/deadhost/20220521214159.png" alt=""></p>
 <p>The <em>host.plaso</em> file is the database file created by log2timeline, which can be exported to a CSV file, which can be read using ie. Eric Zimmermans <a href="https://ericzimmerman.github.io/#!index.md">timeline explorer</a>.</p>
 <p>Converting the host.plaso file to a CSV file is done using Plaso&rsquo;s psort.py tool.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /home/aas/vmshared/nisthack/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
 </code></pre></div><p>The command gives the output as shown below and creates the file <em>timeline.csv</em>.</p>
 <p><img src="/img/deadhost/20220521215255.png" alt=""></p>
 <p>Once the CSV is created, it can be loaded in to a tool such as Eric Zimmermans Timeline explorer, which has a very handy preset of colour mapping to easily get an overview of execution, web history and much more. A screenshot of the CSV just created is seen below.</p>

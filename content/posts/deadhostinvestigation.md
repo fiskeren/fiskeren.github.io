@@ -64,7 +64,7 @@ The *host.plaso* file is the database file created by log2timeline, which can be
 Converting the host.plaso file to a CSV file is done using Plaso's psort.py tool.
 
 ```bash
-sudo docker run -v /home/aas/vmshared/nisthack/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
+sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
 ```
 
 The command gives the output as shown below and creates the file *timeline.csv*.
