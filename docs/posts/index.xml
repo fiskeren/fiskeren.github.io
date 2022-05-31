@@ -25,7 +25,7 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <h2 id="collecting-artifacts">Collecting artifacts</h2>
 <p>The Velociraptor executable has multiple built-in collection modules that can be used to collect various artefacts from hosts. In this example I&rsquo;ve chosen to use the Windows.KapeFiles.Targets artefacts collection method. This is created after Eric Zimmermans KAPE (Kroll Artefact Parser and Extractor), and collects a wide range of artefacts. I will be collecting artefacts defined by the built in _SANS_Triage, Notepad and MemoryFiles artefacts lists because this collects <em>most</em> artefacts needed in an investigation. These lists are essentially collections of directory and file names that Velociraptor will search for on the specified host.</p>
 <p>The command used us the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
 </code></pre></div><p>Arguments used:</p>
 <ul>
 <li><code>artifacts collect Windows.KapeFiles.Targets</code> - Select the collection method <em>Windows.KapeFiles.Targets</em></li>
@@ -43,12 +43,12 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <h2 id="super-timeline">Super Timeline</h2>
 <p>Once the artefacts are collected, Plaso&rsquo;s log2timeline can be used to create a timeline from them. Giving an easy way to triage an image, identifying suspicious activity.</p>
 <p>I will be using the docker version of log2timeline, where I mount my local folder to the docker instance as <code>/data</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
 </code></pre></div><p>The command should give the output as shown below and create a file called <em>host.plaso</em>.</p>
 <p><img src="/img/deadhost/20220521214159.png" alt=""></p>
 <p>The <em>host.plaso</em> file is the database file created by log2timeline, which can be exported to a CSV file, which can be read using ie. Eric Zimmermans <a href="https://ericzimmerman.github.io/#!index.md">timeline explorer</a>.</p>
 <p>Converting the host.plaso file to a CSV file is done using Plaso&rsquo;s psort.py tool.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
 </code></pre></div><p>The command gives the output as shown below and creates the file <em>timeline.csv</em>.</p>
 <p><img src="/img/deadhost/20220521215255.png" alt=""></p>
 <p>Once the CSV is created, it can be loaded in to a tool such as Eric Zimmermans Timeline explorer, which has a very handy preset of colour mapping to easily get an overview of execution, web history and much more. A screenshot of the CSV just created is seen below.</p>
