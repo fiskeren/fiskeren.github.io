@@ -6,8 +6,62 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-uk</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Sun, 22 May 2022 09:45:02 +0100</lastBuildDate>
+        <lastBuildDate>Tue, 07 Jun 2022 16:30:11 +0100</lastBuildDate>
         <atom:link href="https://fiskeren.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Creating Standalone Artifact Collector</title>
+            <link>https://fiskeren.github.io/posts/creating_collector/</link>
+            <pubDate>Tue, 07 Jun 2022 16:30:11 +0100</pubDate>
+            
+            <guid>https://fiskeren.github.io/posts/creating_collector/</guid>
+            <description>I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
+Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector.</description>
+            <content type="html"><![CDATA[<p>I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.</p>
+<p><a href="https://docs.velociraptor.app/">Velociraptor</a> is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector.</p>
+<p>A standalone collector is an executable that is handy in situations where Velociraptor or other kinds of collection tools are not deployed in the environment. It could be that a consultant responding to an incident wants to give the client sysadmin a quick way to collect artefacts from a suspicious host without tool deployment.</p>
+<h2 id="running-velociraptor-in-gui-mode">Running Velociraptor in GUI mode</h2>
+<p>Velociraptor made it quite easy to create a collector without having to setup a lot beforehand. After downloading the Velociraptor executable from their <a href="https://github.com/Velocidex/velociraptor">github page</a> we can run the executable using the <code>gui</code> parameter. This will give us the Velociraptor web page, as if we were running it in server mode.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe gui
+</code></pre></div><p><img src="/img/offlinecollect/20220603171710.png" alt=""></p>
+<p>This will also automatically open up the default browser to the Velociraptor web page.</p>
+<p><img src="/img/offlinecollect/20220603172257.png" alt=""></p>
+<p>We are now ready to create the collector.</p>
+<h2 id="creating-standalone-collector">Creating standalone collector</h2>
+<p>Once the Velociraptor executable is running in gui mode, we will be able to use to use its capabilities to create a standalone collector.</p>
+<p>To do this we will go to the <em>Server Artifacts</em> menu tab and press the small paper plain icon called <em>Create offline Collector</em>. This will open op a menu with the different default artefacts Velociraptor is capable of collecting from hosts.</p>
+<p><img src="/img/offlinecollect/20220603172949.png" alt=""></p>
+<p>For this exercise I&rsquo;ll choose <em>Windows.KapeFiles.Targets</em> and <em>Windows.Memory.Acquisition</em>. KAPE is created after Eric Zimmermans KAPE (Kroll Artefact Parser and Extractor), and can collect a wide range of artefacts. Windows.Memory.Acquisition will use WinPmem to collect the memory of the machine.</p>
+<p>After selecting  <em>Windows.KapeFiles.Targets</em> and <em>Windows.Memory.Acquisition</em> go to the Configure Parameters tab at the bottom. This will show the two selected artefact modules. Select thereafter the <em>Windows.KapeFiles.Targets</em> module, which will give a wide range of artefacts to collect. I will recommend to choose the <em>_SANS_Triage</em> artefact list because this gives a wide range of artefacts, and will cover most use cases.</p>
+<p><img src="/img/offlinecollect/20220603174026.png" alt=""></p>
+<p>At the next tab <em>Configure Collection</em> there&rsquo;s multiple settings that can be set. Some of the more interesting once are the <em>Collection</em> Type and <em>Password</em>. Collection Type gives the possibility to:</p>
+<ul>
+<li>Create a zip file locally on the system</li>
+<li>Upload the zip file directly to a Google Cloud Bucket</li>
+<li>Upload to an AWS bucket</li>
+<li>Upload to a SFTP server</li>
+</ul>
+<p>This is really smart if we have ie. a timesketch setup, that automatically handles the collected artefacts being uploaded and creates a timeline in timesketch.</p>
+<p><img src="/img/offlinecollect/20220603174333.png" alt=""></p>
+<p>In the <em>Specify resources</em> tab we&rsquo;ll be able to set a limit on the resources used by the Velociraptor collector. As a standard the CPU limit is set to 100% and max execution is 600 seconds. Since we are collecting memory also, this might take a while, so I would recommend setting the max execution time a bit higher eg. 900  or 1200 seconds</p>
+<p><img src="/img/offlinecollect/20220603174843.png" alt=""></p>
+<p>Once done with the different configurations, we can go to the <em>Review</em> tab, check the configuration in JSON, and from there go to the <em>Launch</em> tab. Launch tab will check all prerequisites including downloading the WinPmem executable from the Velociraptor repository. The neat thing with this, is that Velociraptor will embed the executable in to the Collector executable, so we wont have to deal with multiple executable.</p>
+<p>Once all is green on the <em>Launch</em> tab, we can click the newly create collection and go to the <em>Uploaded Files</em> tab as shown below. Here we&rsquo;ll be able to download the newly created collector executable.</p>
+<p><img src="/img/offlinecollect/20220603175002.png" alt=""></p>
+<p>We can now copy this executable to the host we want to collect from and run it as administrator.</p>
+<p><img src="/img/offlinecollect/20220603175217.png" alt=""></p>
+<p>The collector will open up a new window showing all the different files being collected, and close it self as soon as it is done collecting. After collecting we can then copy out the zip file to our investigator host or go to the uploaded file in our Google/AWS/SFTP bucket</p>
+<p><img src="/img/offlinecollect/20220603175305.png" alt=""></p>
+<h2 id="re-configuring-the-collector-executable">Re-configuring the collector executable</h2>
+<p>Now, if we already created a offline collection executable, and we want to reconfigure the settings, we can dump out the configuration from the collector to yaml, reconfigure the settings in the yaml and then pack it into a new executable.</p>
+<p>Extract configuration from standalone collector executable:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-2-windows-amd64.exe config show &gt; config.yaml
+</code></pre></div><p>Once the yaml file is re-configured, we can repack the collector using the following command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-windows-amd64.exe config repack config.yaml collector_repacked.exe
+</code></pre></div><p>We can also verify the configuration using the following command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\collector_repacked.exe config show
+</code></pre></div>]]></content>
+        </item>
         
         <item>
             <title>Deadhost Investigation and Super Timeline</title>
@@ -25,7 +79,7 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <h2 id="collecting-artifacts">Collecting artifacts</h2>
 <p>The Velociraptor executable has multiple built-in collection modules that can be used to collect various artefacts from hosts. In this example I&rsquo;ve chosen to use the Windows.KapeFiles.Targets artefacts collection method. This is created after Eric Zimmermans KAPE (Kroll Artefact Parser and Extractor), and collects a wide range of artefacts. I will be collecting artefacts defined by the built in _SANS_Triage, Notepad and MemoryFiles artefacts lists because this collects <em>most</em> artefacts needed in an investigation. These lists are essentially collections of directory and file names that Velociraptor will search for on the specified host.</p>
 <p>The command used us the following:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
 </code></pre></div><p>Arguments used:</p>
 <ul>
 <li><code>artifacts collect Windows.KapeFiles.Targets</code> - Select the collection method <em>Windows.KapeFiles.Targets</em></li>
@@ -43,12 +97,12 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <h2 id="super-timeline">Super Timeline</h2>
 <p>Once the artefacts are collected, Plaso&rsquo;s log2timeline can be used to create a timeline from them. Giving an easy way to triage an image, identifying suspicious activity.</p>
 <p>I will be using the docker version of log2timeline, where I mount my local folder to the docker instance as <code>/data</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
 </code></pre></div><p>The command should give the output as shown below and create a file called <em>host.plaso</em>.</p>
 <p><img src="/img/deadhost/20220521214159.png" alt=""></p>
 <p>The <em>host.plaso</em> file is the database file created by log2timeline, which can be exported to a CSV file, which can be read using ie. Eric Zimmermans <a href="https://ericzimmerman.github.io/#!index.md">timeline explorer</a>.</p>
 <p>Converting the host.plaso file to a CSV file is done using Plaso&rsquo;s psort.py tool.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
 </code></pre></div><p>The command gives the output as shown below and creates the file <em>timeline.csv</em>.</p>
 <p><img src="/img/deadhost/20220521215255.png" alt=""></p>
 <p>Once the CSV is created, it can be loaded in to a tool such as Eric Zimmermans Timeline explorer, which has a very handy preset of colour mapping to easily get an overview of execution, web history and much more. A screenshot of the CSV just created is seen below.</p>
