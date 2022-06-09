@@ -41,9 +41,14 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 
 <meta itemprop="name" content="Deadhost Investigation and Super Timeline">
 <meta itemprop="description" content="I recently attended a SANS 508 course and got time to play around with Velociraptor, which is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artifact collector.
-In this post, I&rsquo;ll try to explain how to use the Velociraptor executable as a artefact collector to quickly collect Windows artefacts from a dead host image."><meta itemprop="datePublished" content="2022-05-22T09:45:02+01:00" />
-<meta itemprop="dateModified" content="2022-05-22T09:45:02+01:00" />
-<meta itemprop="wordCount" content="637"><meta itemprop="image" content="https://fiskeren.github.io"/>
+In this post, I&rsquo;ll try to explain how to use the Velociraptor executable as a artefact collector to quickly collect Windows artefacts from a dead host image.">
+<meta itemprop="datePublished" content="2022-05-22T09:45:02&#43;01:00" />
+<meta itemprop="dateModified" content="2022-05-22T09:45:02&#43;01:00" />
+<meta itemprop="wordCount" content="637">
+<meta itemprop="image" content="https://fiskeren.github.io"/>
+
+
+
 <meta itemprop="keywords" content="DFIR,Deadhost investigation,forensics," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://fiskeren.github.io"/>
@@ -59,10 +64,10 @@ In this post, I&rsquo;ll try to explain how to use the Velociraptor executable a
 <meta property="og:description" content="I recently attended a SANS 508 course and got time to play around with Velociraptor, which is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artifact collector.
 In this post, I&rsquo;ll try to explain how to use the Velociraptor executable as a artefact collector to quickly collect Windows artefacts from a dead host image." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://fiskeren.github.io/posts/deadhostinvestigation/" /><meta property="og:image" content="https://fiskeren.github.io"/><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://fiskeren.github.io/posts/deadhostinvestigation/" />
+<meta property="og:image" content="https://fiskeren.github.io"/>
 <meta property="article:published_time" content="2022-05-22T09:45:02+01:00" />
 <meta property="article:modified_time" content="2022-05-22T09:45:02+01:00" /><meta property="og:site_name" content="fiskeren.github.io" />
-
 
 
 
@@ -159,7 +164,7 @@ In this post, I&rsquo;ll try to explain how to use the Velociraptor executable a
 <h2 id="collecting-artifacts">Collecting artifacts</h2>
 <p>The Velociraptor executable has multiple built-in collection modules that can be used to collect various artefacts from hosts. In this example I&rsquo;ve chosen to use the Windows.KapeFiles.Targets artefacts collection method. This is created after Eric Zimmermans KAPE (Kroll Artefact Parser and Extractor), and collects a wide range of artefacts. I will be collecting artefacts defined by the built in _SANS_Triage, Notepad and MemoryFiles artefacts lists because this collects <em>most</em> artefacts needed in an investigation. These lists are essentially collections of directory and file names that Velociraptor will search for on the specified host.</p>
 <p>The command used us the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
 </code></pre></div><p>Arguments used:</p>
 <ul>
 <li><code>artifacts collect Windows.KapeFiles.Targets</code> - Select the collection method <em>Windows.KapeFiles.Targets</em></li>
@@ -177,12 +182,12 @@ In this post, I&rsquo;ll try to explain how to use the Velociraptor executable a
 <h2 id="super-timeline">Super Timeline</h2>
 <p>Once the artefacts are collected, Plaso&rsquo;s log2timeline can be used to create a timeline from them. Giving an easy way to triage an image, identifying suspicious activity.</p>
 <p>I will be using the docker version of log2timeline, where I mount my local folder to the docker instance as <code>/data</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
 </code></pre></div><p>The command should give the output as shown below and create a file called <em>host.plaso</em>.</p>
 <p><img src="/img/deadhost/20220521214159.png" alt=""></p>
 <p>The <em>host.plaso</em> file is the database file created by log2timeline, which can be exported to a CSV file, which can be read using ie. Eric Zimmermans <a href="https://ericzimmerman.github.io/#!index.md">timeline explorer</a>.</p>
 <p>Converting the host.plaso file to a CSV file is done using Plaso&rsquo;s psort.py tool.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
 </code></pre></div><p>The command gives the output as shown below and creates the file <em>timeline.csv</em>.</p>
 <p><img src="/img/deadhost/20220521215255.png" alt=""></p>
 <p>Once the CSV is created, it can be loaded in to a tool such as Eric Zimmermans Timeline explorer, which has a very handy preset of colour mapping to easily get an overview of execution, web history and much more. A screenshot of the CSV just created is seen below.</p>
@@ -375,8 +380,8 @@ In this post, I&rsquo;ll try to explain how to use the Velociraptor executable a
 
 
 
-<script type="text/javascript" src="/bundle.min.599099f1f14b78b657d524b28e10e0c5098e7cd46e9c7aed73d577068a276c3ff1bb234cbf29cb313333e83cf411727b43157c91ce5b809e2ffc81664614608e.js" integrity="sha512-WZCZ8fFLeLZX1SSyjhDgxQmOfNRunHrtc9V3BoonbD/xuyNMvynLMTMz6Dz0EXJ7QxV8kc5bgJ4v/IFmRhRgjg=="></script>
-
+<script type="text/javascript" src="/bundle.min.ace63d93098bf623f7c286a9084a4c22bfc482944c734f87fe0b685c7c6c7fa0ad2edb028c3b4b60d3343720c8ab490b320ad7f8edf4f6e9a6b898fc529057a9.js" integrity="sha512-rOY9kwmL9iP3woapCEpMIr/EgpRMc0&#43;H/gtoXHxsf6CtLtsCjDtLYNM0NyDIq0kLMgrX&#43;O309ummuJj8UpBXqQ=="></script>
+<script data-goatcounter="https://fiskeren.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 
     </body>

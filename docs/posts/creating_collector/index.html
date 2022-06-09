@@ -41,9 +41,14 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 
 <meta itemprop="name" content="Creating Standalone Artifact Collector">
 <meta itemprop="description" content="I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
-Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector."><meta itemprop="datePublished" content="2022-06-07T16:30:11+01:00" />
-<meta itemprop="dateModified" content="2022-06-07T16:30:11+01:00" />
-<meta itemprop="wordCount" content="797"><meta itemprop="image" content="https://fiskeren.github.io"/>
+Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector.">
+<meta itemprop="datePublished" content="2022-06-07T16:30:11&#43;01:00" />
+<meta itemprop="dateModified" content="2022-06-07T16:30:11&#43;01:00" />
+<meta itemprop="wordCount" content="797">
+<meta itemprop="image" content="https://fiskeren.github.io"/>
+
+
+
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://fiskeren.github.io"/>
@@ -59,10 +64,10 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 <meta property="og:description" content="I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
 Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://fiskeren.github.io/posts/creating_collector/" /><meta property="og:image" content="https://fiskeren.github.io"/><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://fiskeren.github.io/posts/creating_collector/" />
+<meta property="og:image" content="https://fiskeren.github.io"/>
 <meta property="article:published_time" content="2022-06-07T16:30:11+01:00" />
 <meta property="article:modified_time" content="2022-06-07T16:30:11+01:00" /><meta property="og:site_name" content="fiskeren.github.io" />
-
 
 
 
@@ -156,7 +161,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 <p>A standalone collector is an executable that is handy in situations where Velociraptor or other kinds of collection tools are not deployed in the environment. It could be that a consultant responding to an incident wants to give the client sysadmin a quick way to collect artefacts from a suspicious host without tool deployment.</p>
 <h2 id="running-velociraptor-in-gui-mode">Running Velociraptor in GUI mode</h2>
 <p>Velociraptor made it quite easy to create a collector without having to setup a lot beforehand. After downloading the Velociraptor executable from their <a href="https://github.com/Velocidex/velociraptor">github page</a> we can run the executable using the <code>gui</code> parameter. This will give us the Velociraptor web page, as if we were running it in server mode.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe gui
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe gui
 </code></pre></div><p><img src="/img/offlinecollect/20220603171710.png" alt=""></p>
 <p>This will also automatically open up the default browser to the Velociraptor web page.</p>
 <p><img src="/img/offlinecollect/20220603172257.png" alt=""></p>
@@ -189,11 +194,11 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 <h2 id="re-configuring-the-collector-executable">Re-configuring the collector executable</h2>
 <p>Now, if we already created a offline collection executable, and we want to reconfigure the settings, we can dump out the configuration from the collector to yaml, reconfigure the settings in the yaml and then pack it into a new executable.</p>
 <p>Extract configuration from standalone collector executable:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-2-windows-amd64.exe config show &gt; config.yaml
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-2-windows-amd64.exe config show &gt; config.yaml
 </code></pre></div><p>Once the yaml file is re-configured, we can repack the collector using the following command:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-windows-amd64.exe config repack config.yaml collector_repacked.exe
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-windows-amd64.exe config repack config.yaml collector_repacked.exe
 </code></pre></div><p>We can also verify the configuration using the following command:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\collector_repacked.exe config show
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\collector_repacked.exe config show
 </code></pre></div>
       </div>
     </article>
@@ -370,8 +375,8 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 
 
 
-<script type="text/javascript" src="/bundle.min.599099f1f14b78b657d524b28e10e0c5098e7cd46e9c7aed73d577068a276c3ff1bb234cbf29cb313333e83cf411727b43157c91ce5b809e2ffc81664614608e.js" integrity="sha512-WZCZ8fFLeLZX1SSyjhDgxQmOfNRunHrtc9V3BoonbD/xuyNMvynLMTMz6Dz0EXJ7QxV8kc5bgJ4v/IFmRhRgjg=="></script>
-
+<script type="text/javascript" src="/bundle.min.ace63d93098bf623f7c286a9084a4c22bfc482944c734f87fe0b685c7c6c7fa0ad2edb028c3b4b60d3343720c8ab490b320ad7f8edf4f6e9a6b898fc529057a9.js" integrity="sha512-rOY9kwmL9iP3woapCEpMIr/EgpRMc0&#43;H/gtoXHxsf6CtLtsCjDtLYNM0NyDIq0kLMgrX&#43;O309ummuJj8UpBXqQ=="></script>
+<script data-goatcounter="https://fiskeren.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 
     </body>
