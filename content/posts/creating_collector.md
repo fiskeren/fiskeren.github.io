@@ -4,6 +4,9 @@ date: 2022-06-07T16:30:11+01:00
 draft: false
 comments: false
 images:
+tags:
+  - DFIR
+  - forensics
 ---
 
 I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.

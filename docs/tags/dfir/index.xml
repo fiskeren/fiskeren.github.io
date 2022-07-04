@@ -7,10 +7,29 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-uk</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 22 May 2022 09:45:02 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 04 Jul 2022 11:30:36 +0100</lastBuildDate>
     
 	<atom:link href="https://fiskeren.github.io/tags/dfir/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Velociraptor Threathunting - Quick Introduction</title>
+      <link>https://fiskeren.github.io/posts/velothreathunt/</link>
+      <pubDate>Mon, 04 Jul 2022 11:30:36 +0100</pubDate>
+      
+      <guid>https://fiskeren.github.io/posts/velothreathunt/</guid>
+      <description>In my previous posts I&amp;rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &amp;ldquo;Are there baddies in the network?&amp;quot;, &amp;ldquo;How many machines have executable X on it?&amp;quot;, &amp;ldquo;Did user X log on to system Y?&amp;rdquo; etc.</description>
+    </item>
+    
+    <item>
+      <title>Creating Standalone Artifact Collector</title>
+      <link>https://fiskeren.github.io/posts/creating_collector/</link>
+      <pubDate>Tue, 07 Jun 2022 16:30:11 +0100</pubDate>
+      
+      <guid>https://fiskeren.github.io/posts/creating_collector/</guid>
+      <description>I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
+Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector.</description>
+    </item>
     
     <item>
       <title>Deadhost Investigation and Super Timeline</title>

@@ -3,12 +3,37 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://fiskeren.github.io/tags/dfir/</loc>
+    <lastmod>2022-07-04T11:30:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://fiskeren.github.io/posts/</loc>
+    <lastmod>2022-07-04T11:30:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://fiskeren.github.io/tags/</loc>
+    <lastmod>2022-07-04T11:30:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://fiskeren.github.io/tags/threathunting/</loc>
+    <lastmod>2022-07-04T11:30:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://fiskeren.github.io/posts/velothreathunt/</loc>
+    <lastmod>2022-07-04T11:30:36+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://fiskeren.github.io/posts/creating_collector/</loc>
     <lastmod>2022-06-07T16:30:11+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://fiskeren.github.io/posts/</loc>
+    <loc>https://fiskeren.github.io/tags/forensics/</loc>
     <lastmod>2022-06-07T16:30:11+01:00</lastmod>
   </url>
   
@@ -29,21 +54,6 @@
   
   <url>
     <loc>https://fiskeren.github.io/posts/deadhostinvestigation/</loc>
-    <lastmod>2022-05-22T09:45:02+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://fiskeren.github.io/tags/dfir/</loc>
-    <lastmod>2022-05-22T09:45:02+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://fiskeren.github.io/tags/forensics/</loc>
-    <lastmod>2022-05-22T09:45:02+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://fiskeren.github.io/tags/</loc>
     <lastmod>2022-05-22T09:45:02+01:00</lastmod>
   </url>
   
