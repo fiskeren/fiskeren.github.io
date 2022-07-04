@@ -97,7 +97,7 @@ An important thing to always have in mind when doing threathunts and investigati
 To get a list of running processes we can use the artefact `Windows.System.Pslist`.  The output will be quite big, and it will therefore make sense to do some sorting and stacking on the output.
 
 The following VQL query takes the output from the hunt, and only shows the unsigned binaries running on the systems:
-```
+```sql
 SELECT Name,Exe,Commandline,Hash.SHA256 AS SHA256,Authenticode.Trusted,Username,Fqdn,count() AS Count FROM source()
 WHERE Authenticode.Trusted = "untrusted" //show only unsigned binaries
 AND NOT Exe = "C:\\Path\\to\\whitelisted\\binary"

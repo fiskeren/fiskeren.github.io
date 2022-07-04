@@ -206,13 +206,13 @@
 <p>An important thing to always have in mind when doing threathunts and investigations is &lsquo;How does normal look like?'. Its always tough to answer that question as a consultant coming in to an environment, but Velociraptor can help in getting an overview of what&rsquo;s running on the systems.</p>
 <p>To get a list of running processes we can use the artefact <code>Windows.System.Pslist</code>.  The output will be quite big, and it will therefore make sense to do some sorting and stacking on the output.</p>
 <p>The following VQL query takes the output from the hunt, and only shows the unsigned binaries running on the systems:</p>
-<pre><code>SELECT Name,Exe,Commandline,Hash.SHA256 AS SHA256,Authenticode.Trusted,Username,Fqdn,count() AS Count FROM source()
-WHERE Authenticode.Trusted = &quot;untrusted&quot; //show only unsigned binaries
-AND NOT Exe = &quot;C:\\Path\\to\\whitelisted\\binary&quot;
-//Stack for prevalence
-GROUP BY Exe
-ORDER BY Count
-</code></pre><h3 id="finding-files-across-the-network">Finding files across the network</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> Name,Exe,Commandline,Hash.SHA256 <span style="color:#66d9ef">AS</span> SHA256,Authenticode.<span style="color:#66d9ef">Trusted</span>,Username,Fqdn,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
+<span style="color:#66d9ef">WHERE</span> Authenticode.<span style="color:#66d9ef">Trusted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;untrusted&#34;</span> <span style="color:#f92672">//</span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">only</span> unsigned binaries
+<span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Exe <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C:\\Path\\to\\whitelisted\\binary&#34;</span>
+<span style="color:#f92672">//</span>Stack <span style="color:#66d9ef">for</span> prevalence
+<span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> Exe
+<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
+</code></pre></div><h3 id="finding-files-across-the-network">Finding files across the network</h3>
 <p>The last artefact I would like to show is how to search for files. This can be useful if we already have a list of known IOCs with filenames that we would like to search for, or it could be we are just hunting for &lsquo;weird&rsquo; files. To search for files we can use the <code>Windows.Search.FileFinder</code>  artefact.</p>
 <p>As example lets do a search for DLL files in weird locations, that might help us find bad stuff. For the SearchFileGlobTable, we will add locations to look for:</p>
 <pre><code>C:\Windows\Tasks\*.dll
