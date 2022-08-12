@@ -6,8 +6,43 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-uk</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Mon, 04 Jul 2022 11:30:36 +0100</lastBuildDate>
+        <lastBuildDate>Fri, 12 Aug 2022 17:28:43 +0100</lastBuildDate>
         <atom:link href="https://fiskeren.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Geolocating IP addresses in Velociraptor</title>
+            <link>https://fiskeren.github.io/posts/velogeoip/</link>
+            <pubDate>Fri, 12 Aug 2022 17:28:43 +0100</pubDate>
+            
+            <guid>https://fiskeren.github.io/posts/velogeoip/</guid>
+            <description>I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&amp;rsquo;ll quickly run over how to use geoip().
+This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)</description>
+            <content type="html"><![CDATA[<p>I read the <a href="http://www.mashthatkey.com/2022/08/velociraptor-playground-2022-08-02.html?m=1">blog post</a> by Carlos Cajigas and saw his <a href="https://www.youtube.com/watch?v=DMj0pU6kYvg">YouTube</a> video demonstrating some really neat Velociraptor tricks including usage of the build in <code>geoip()</code> function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use <code>geoip()</code>.</p>
+<p>This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)</p>
+<h2 id="collecting-netstat-information-from-hosts">Collecting netstat information from hosts</h2>
+<p>In Velociraptor there&rsquo;s an artefact called <code>Windows.Network.Netstat</code>, which pulls an overview of connections done by Windows hosts  to any IPs, just as if we had opened a command line prompt and typed in <code>netstat</code> on a host. That way we can see what the hosts actually connects to at the moment. Below is a picture of the artefact in Velociraptor.</p>
+<p><img src="/img/velogeoip/Pasted_image_20220812193744.png" alt=""></p>
+<p>Once the hunt has run on the host(s). The output should look like the image below, which is multiple pages long.</p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-40-25.png%5D" alt=""></p>
+<h2 id="geo-locating-remote-ips">Geo locating remote IPs</h2>
+<p>from the picture above we can see that the <code>netstat</code> output shows <code>Raddr.IP</code> which is the remote IP or the IP of the server that the host is connecting to.</p>
+<p>Looking at an IP and telling where that IP is located in the world can be hard, so to make that easier we can use the GeoLite2 Free database from <a href="https://www.maxmind.com/en/accounts/current/geoip/downloads">Maxmind</a>. This is a database that can match an IP up against ie. country, city or ASN number. In this blog I am going to use the <code>GeoLite2-City.mmdb</code> database.</p>
+<p>With the database downloaded from GeoLite2, we can go ahead an edit the <code>Windows.Network.Netstat</code> artefact output.</p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-50-52.png%5D" alt=""></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span>,<span style="color:#66d9ef">Timestamp</span>,Pid,Name,Status,<span style="color:#f92672">`</span>Laddr.IP<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>Laddr.Port<span style="color:#f92672">`</span>,
+</span></span><span style="display:flex;"><span>geoip(ip<span style="color:#f92672">=`</span>Raddr.IP<span style="color:#f92672">`</span>,db<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;C:\\GeoLite2-City.mmdb&#39;</span>).country.<span style="color:#66d9ef">names</span>.en <span style="color:#66d9ef">AS</span> Country,<span style="color:#f92672">`</span>Raddr.IP<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>Raddr.Port<span style="color:#f92672">`</span>,Fqdn
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> Status <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;ESTAB&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Country <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;United States&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> Country
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
+</span></span></code></pre></div><p>The VQL statement above grabs the <code>Timestamp</code>, Process ID (<code>Pid</code>), Name of the process(<code>Name</code>), <code>Status</code> (example: established, connecting), Local IP(<code>Laddr.IP</code>), Local port (<code>Laddr.Port</code>, Remote IP(<code>Raddr.IP</code>), Remote port(<code>Raddr.Port</code>) and the host name of the computer (<code>Fqdn</code>, and then enriches it using the function caled <code>geoip()</code> that fetches the mmdb GeoLite database we downloaded. It then queries the remote IPs up against it to get a country name, looks for only established connections, filters out countries that are not the US and then orders it by how many connections there are.</p>
+<p>The query gives the following output.</p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-57-20.png" alt="">
+<img src="/img/velogeoip/Screenshot_2022-08-12_20-07-46.png" alt="">
+As seen above, there are a couple of connections to Ireland, some to Denmark and then some to the UK. This could give a really easy overview off the different countries and IPs that the hosts in the environment are connecting to.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Velociraptor Threathunting - Quick Introduction</title>
@@ -15,26 +50,26 @@
             <pubDate>Mon, 04 Jul 2022 11:30:36 +0100</pubDate>
             
             <guid>https://fiskeren.github.io/posts/velothreathunt/</guid>
-            <description>In my previous posts I&amp;rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &amp;ldquo;Are there baddies in the network?&amp;quot;, &amp;ldquo;How many machines have executable X on it?&amp;quot;, &amp;ldquo;Did user X log on to system Y?&amp;rdquo; etc.</description>
-            <content type="html"><![CDATA[<p>In my previous posts I&rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &ldquo;Are there baddies in the network?&quot;, &ldquo;How many machines have executable X on it?&quot;, &ldquo;Did user X log on to system Y?&rdquo; etc. In this blog post I will try to give a quick introduction to how to use Velociraptor to answer those kind of questions.</p>
+            <description>In my previous posts I&amp;rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &amp;ldquo;Are there baddies in the network?&amp;rdquo;, &amp;ldquo;How many machines have executable X on it?&amp;rdquo;, &amp;ldquo;Did user X log on to system Y?&amp;rdquo; etc.</description>
+            <content type="html"><![CDATA[<p>In my previous posts I&rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &ldquo;Are there baddies in the network?&rdquo;, &ldquo;How many machines have executable X on it?&rdquo;, &ldquo;Did user X log on to system Y?&rdquo; etc. In this blog post I will try to give a quick introduction to how to use Velociraptor to answer those kind of questions.</p>
 <h2 id="quick-intro-to-vql">Quick intro to VQL</h2>
 <p>All queries Velociraptor does are done using the Velociraptor Query language or VQL, which is very much like a simpler version of SQL, and therefore also something most people will be able to read and learn very easily. Take the example below - this query will take all columns from the <code>Info()</code> artefacts and show it to the responder.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> info()
-</code></pre></div><p>The output will be something like the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> info()
+</span></span></code></pre></div><p>The output will be something like the following:</p>
 <p><img src="/img/velothreathunt/20220704115223.png" alt=""></p>
 <p>If you did this over multiple machines using the &lsquo;Hunt Manager&rsquo; in Velociraptor, you could expand the query to get an overview of how many different versions of OS&rsquo; you have. To do this, We will create a hunt using the <code>Generic.Client.Info</code> artefacts, and query that across all machines. Once its done, the information received can we seen in the &lsquo;Notebook&rsquo; tab of the hunt:</p>
 <p><img src="/img/velothreathunt/20220704120815.png" alt=""></p>
 <p>Now, this will give a table with a row for each machine, which can be handy, but what if there is 1000 endpoints in the environment, the table will probably not be that easy to get an overview off. Therefore, lets edit the VQL statement to make it a bit easier to read. Do that by pressing the small edit button in the top of the notebook. The default query will probably look something like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#75715e">/*
-</span><span style="color:#75715e"># Generic.Client.Info/BasicInformation
-</span><span style="color:#75715e">*/</span>
-<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>(artifact<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Generic.Client.Info/BasicInformation&#34;</span>)
-<span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">50</span>
-</code></pre></div><p>If we look at the statement, we will see that the data source is not <code>info()</code> but instead <code>source()</code>, that&rsquo;s because it comes from a hunt collecting artefacts from multiple machines, and not a single run on a single machine.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Generic.Client.Info/BasicInformation
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>(artifact<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Generic.Client.Info/BasicInformation&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">50</span>
+</span></span></code></pre></div><p>If we look at the statement, we will see that the data source is not <code>info()</code> but instead <code>source()</code>, that&rsquo;s because it comes from a hunt collecting artefacts from multiple machines, and not a single run on a single machine.</p>
 <p>Now, to get an overview, lets change the VQL statement to:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> OS,Platform,PlatformVersion,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
-<span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> OS
-</code></pre></div><p>The output is that we now have a row per OS version an a count of how many systems that have this OS:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> OS,Platform,PlatformVersion,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> OS
+</span></span></code></pre></div><p>The output is that we now have a row per OS version an a count of how many systems that have this OS:</p>
 <p><img src="/img/velothreathunt/20220704122946.png" alt=""></p>
 <p>As you can see, the VQL language is quite powerful, and will give the responder the ability to quickly collect data or to get an overview of data collected from hosts. In fact, all hunts in Velociraptor is actually VQL statements made to query systems for information.</p>
 <h2 id="installing-artefacts-from-artifact-exchange">Installing artefacts from &lsquo;Artifact Exchange&rsquo;</h2>
@@ -52,43 +87,43 @@
 <p>Results:</p>
 <p><img src="/img/velothreathunt/20220704131930.png" alt=""></p>
 <h3 id="finding-lateral-movement">Finding lateral movement</h3>
-<p>A key question in almost all investigations and hunts is: &lsquo;where did the threat actor go?', and to answer this (or get indication off) we can use the artefact <code>Windows.EventLogs-RDPAuth</code>.</p>
+<p>A key question in almost all investigations and hunts is: &lsquo;where did the threat actor go?&rsquo;, and to answer this (or get indication off) we can use the artefact <code>Windows.EventLogs-RDPAuth</code>.</p>
 <p>Even though the name indicates that Velociraptor will only search for RDP authentications, if we look a bit closer at the artefact, we will see in the description that it actually also looks at common logons such as 4624 type 3,7 and 10, which is not exclusively used for RDP authentication.</p>
 <p>As you can see, the output can be very noisy and hard to get an overview over:</p>
 <p><img src="/img/velothreathunt/20220704133227.png" alt=""></p>
 <p>To narrow down the output, lets edit the VQL statement:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> EventTime,Computer,Channel,EventID,UserName,LogonType,SourceIP,Description,Message,Fqdn <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
-<span style="color:#66d9ef">WHERE</span> ( <span style="color:#f92672">//</span> excluded logons <span style="color:#66d9ef">of</span> the <span style="color:#66d9ef">user</span> <span style="color:#66d9ef">on</span> their own <span style="color:#66d9ef">system</span>
-(UserName <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;suspect1&#34;</span> <span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;suspect1workstation&#34;</span>) 
-)
-<span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> EventID <span style="color:#f92672">=</span> <span style="color:#ae81ff">4634</span> <span style="color:#f92672">//</span> <span style="color:#66d9ef">less</span> interested <span style="color:#66d9ef">in</span> logoff events
-<span style="color:#f92672">//</span> Remove DCs, exchange <span style="color:#66d9ef">and</span> fileserver, since this <span style="color:#66d9ef">is</span> expected <span style="color:#66d9ef">to</span> have alot <span style="color:#66d9ef">of</span> logons
-<span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> (Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;dc&#34;</span> <span style="color:#66d9ef">OR</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;exchange&#34;</span> <span style="color:#66d9ef">OR</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;fs1&#34;</span>) 
-<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> EventTime
-</code></pre></div><p>The output should be a more compact list of logons to other hosts from the patient zero user account, thereby giving the responder easier overview of where to investigate next.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> EventTime,Computer,Channel,EventID,UserName,LogonType,SourceIP,Description,Message,Fqdn <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> ( <span style="color:#f92672">//</span> excluded logons <span style="color:#66d9ef">of</span> the <span style="color:#66d9ef">user</span> <span style="color:#66d9ef">on</span> their own <span style="color:#66d9ef">system</span>
+</span></span><span style="display:flex;"><span>(UserName <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;suspect1&#34;</span> <span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;suspect1workstation&#34;</span>) 
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> EventID <span style="color:#f92672">=</span> <span style="color:#ae81ff">4634</span> <span style="color:#f92672">//</span> <span style="color:#66d9ef">less</span> interested <span style="color:#66d9ef">in</span> logoff events
+</span></span><span style="display:flex;"><span><span style="color:#f92672">//</span> Remove DCs, exchange <span style="color:#66d9ef">and</span> fileserver, since this <span style="color:#66d9ef">is</span> expected <span style="color:#66d9ef">to</span> have alot <span style="color:#66d9ef">of</span> logons
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> (Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;dc&#34;</span> <span style="color:#66d9ef">OR</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;exchange&#34;</span> <span style="color:#66d9ef">OR</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;fs1&#34;</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> EventTime
+</span></span></code></pre></div><p>The output should be a more compact list of logons to other hosts from the patient zero user account, thereby giving the responder easier overview of where to investigate next.</p>
 <h3 id="getting-a-list-of-running-processes">Getting a list of running processes</h3>
-<p>An important thing to always have in mind when doing threathunts and investigations is &lsquo;How does normal look like?'. Its always tough to answer that question as a consultant coming in to an environment, but Velociraptor can help in getting an overview of what&rsquo;s running on the systems.</p>
+<p>An important thing to always have in mind when doing threathunts and investigations is &lsquo;How does normal look like?&rsquo;. Its always tough to answer that question as a consultant coming in to an environment, but Velociraptor can help in getting an overview of what&rsquo;s running on the systems.</p>
 <p>To get a list of running processes we can use the artefact <code>Windows.System.Pslist</code>.  The output will be quite big, and it will therefore make sense to do some sorting and stacking on the output.</p>
 <p>The following VQL query takes the output from the hunt, and only shows the unsigned binaries running on the systems:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> Name,Exe,Commandline,Hash.SHA256 <span style="color:#66d9ef">AS</span> SHA256,Authenticode.<span style="color:#66d9ef">Trusted</span>,Username,Fqdn,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
-<span style="color:#66d9ef">WHERE</span> Authenticode.<span style="color:#66d9ef">Trusted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;untrusted&#34;</span> <span style="color:#f92672">//</span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">only</span> unsigned binaries
-<span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Exe <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C:\\Path\\to\\whitelisted\\binary&#34;</span>
-<span style="color:#f92672">//</span>Stack <span style="color:#66d9ef">for</span> prevalence
-<span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> Exe
-<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
-</code></pre></div><h3 id="finding-files-across-the-network">Finding files across the network</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> Name,Exe,Commandline,Hash.SHA256 <span style="color:#66d9ef">AS</span> SHA256,Authenticode.<span style="color:#66d9ef">Trusted</span>,Username,Fqdn,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> Authenticode.<span style="color:#66d9ef">Trusted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;untrusted&#34;</span> <span style="color:#f92672">//</span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">only</span> unsigned binaries
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Exe <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C:\\Path\\to\\whitelisted\\binary&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">//</span>Stack <span style="color:#66d9ef">for</span> prevalence
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> Exe
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
+</span></span></code></pre></div><h3 id="finding-files-across-the-network">Finding files across the network</h3>
 <p>The last artefact I would like to show is how to search for files. This can be useful if we already have a list of known IOCs with filenames that we would like to search for, or it could be we are just hunting for &lsquo;weird&rsquo; files. To search for files we can use the <code>Windows.Search.FileFinder</code>  artefact.</p>
 <p>As example lets do a search for DLL files in weird locations, that might help us find bad stuff. For the SearchFileGlobTable, we will add locations to look for:</p>
-<pre><code>C:\Windows\Tasks\*.dll
+<pre tabindex="0"><code>C:\Windows\Tasks\*.dll
 C:\Windows\Temp\**\*.dll
 C:\*\*.dll
 C:\*.dll
 </code></pre><p><img src="/img/velothreathunt/20220704140415.png" alt=""></p>
 <p>The output can be very noisy, and we will therefore need to do some sorting in the VQL statement, which should make it a little bit easier to read:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> Fqdn,FullPath,MTime <span style="color:#66d9ef">as</span> Modified,BTime <span style="color:#66d9ef">as</span> Created,IsDir, <span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>() <span style="color:#66d9ef">WHERE</span> IsDir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;false&#39;</span>
-<span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> FullPath
-<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
-</code></pre></div><h2 id="summary">Summary</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> Fqdn,FullPath,MTime <span style="color:#66d9ef">as</span> Modified,BTime <span style="color:#66d9ef">as</span> Created,IsDir, <span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>() <span style="color:#66d9ef">WHERE</span> IsDir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;false&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> FullPath
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
+</span></span></code></pre></div><h2 id="summary">Summary</h2>
 <p>As you can see, the Velociraptor agent can be used to do very power full and quick search the whole host landscape, and thereby making it easier for threat hunters and the like to find things that are out of the ordinary.</p>
 <p>I for more information about how to do hunts and creating queries in VQL, please see the Velociraptor <a href="https://docs.velociraptor.app/">documentation</a>.</p>
 <h2 id="credit">Credit</h2>
@@ -114,8 +149,8 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 <p>A standalone collector is an executable that is handy in situations where Velociraptor or other kinds of collection tools are not deployed in the environment. It could be that a consultant responding to an incident wants to give the client sysadmin a quick way to collect artefacts from a suspicious host without tool deployment.</p>
 <h2 id="running-velociraptor-in-gui-mode">Running Velociraptor in GUI mode</h2>
 <p>Velociraptor made it quite easy to create a collector without having to setup a lot beforehand. After downloading the Velociraptor executable from their <a href="https://github.com/Velocidex/velociraptor">github page</a> we can run the executable using the <code>gui</code> parameter. This will give us the Velociraptor web page, as if we were running it in server mode.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe gui
-</code></pre></div><p><img src="/img/offlinecollect/20220603171710.png" alt=""></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\velociraptor-v0.6.4-2-windows-amd64.exe gui
+</span></span></code></pre></div><p><img src="/img/offlinecollect/20220603171710.png" alt=""></p>
 <p>This will also automatically open up the default browser to the Velociraptor web page.</p>
 <p><img src="/img/offlinecollect/20220603172257.png" alt=""></p>
 <p>We are now ready to create the collector.</p>
@@ -147,12 +182,12 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 <h2 id="re-configuring-the-collector-executable">Re-configuring the collector executable</h2>
 <p>Now, if we already created a offline collection executable, and we want to reconfigure the settings, we can dump out the configuration from the collector to yaml, reconfigure the settings in the yaml and then pack it into a new executable.</p>
 <p>Extract configuration from standalone collector executable:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-2-windows-amd64.exe config show &gt; config.yaml
-</code></pre></div><p>Once the yaml file is re-configured, we can repack the collector using the following command:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\Collector_velociraptor-v0.6.4-windows-amd64.exe config repack config.yaml collector_repacked.exe
-</code></pre></div><p>We can also verify the configuration using the following command:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\collector_repacked.exe config show
-</code></pre></div>]]></content>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\Collector_velociraptor-v0.6.4-2-windows-amd64.exe config show &gt; config.yaml
+</span></span></code></pre></div><p>Once the yaml file is re-configured, we can repack the collector using the following command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\Collector_velociraptor-v0.6.4-windows-amd64.exe config repack config.yaml collector_repacked.exe
+</span></span></code></pre></div><p>We can also verify the configuration using the following command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\collector_repacked.exe config show
+</span></span></code></pre></div>]]></content>
         </item>
         
         <item>
@@ -171,8 +206,8 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <h2 id="collecting-artifacts">Collecting artifacts</h2>
 <p>The Velociraptor executable has multiple built-in collection modules that can be used to collect various artefacts from hosts. In this example I&rsquo;ve chosen to use the Windows.KapeFiles.Targets artefacts collection method. This is created after Eric Zimmermans KAPE (Kroll Artefact Parser and Extractor), and collects a wide range of artefacts. I will be collecting artefacts defined by the built in _SANS_Triage, Notepad and MemoryFiles artefacts lists because this collects <em>most</em> artefacts needed in an investigation. These lists are essentially collections of directory and file names that Velociraptor will search for on the specified host.</p>
 <p>The command used us the following:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
-</code></pre></div><p>Arguments used:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\velociraptor-v0.6.4-2-windows-amd64.exe -v artifacts collect Windows.KapeFiles.Targets --output TriageFile.zip --args Device=<span style="color:#e6db74">&#34;E:&#34;</span> --args KapeTriage=Y --args _SANS_Triage=Y --args Notepad=Y --args MemoryFiles=Y
+</span></span></code></pre></div><p>Arguments used:</p>
 <ul>
 <li><code>artifacts collect Windows.KapeFiles.Targets</code> - Select the collection method <em>Windows.KapeFiles.Targets</em></li>
 <li><code>--output TriageFile.zip</code> - Save the files collected to a zip file called TriageFile.zip</li>
@@ -189,13 +224,13 @@ In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executab
 <h2 id="super-timeline">Super Timeline</h2>
 <p>Once the artefacts are collected, Plaso&rsquo;s log2timeline can be used to create a timeline from them. Giving an easy way to triage an image, identifying suspicious activity.</p>
 <p>I will be using the docker version of log2timeline, where I mount my local folder to the docker instance as <code>/data</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
-</code></pre></div><p>The command should give the output as shown below and create a file called <em>host.plaso</em>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo docker run -v /path/to/evidence/:/data log2timeline/plaso log2timeline --storage-file /data/host.plaso /data/E
+</span></span></code></pre></div><p>The command should give the output as shown below and create a file called <em>host.plaso</em>.</p>
 <p><img src="/img/deadhost/20220521214159.png" alt=""></p>
 <p>The <em>host.plaso</em> file is the database file created by log2timeline, which can be exported to a CSV file, which can be read using ie. Eric Zimmermans <a href="https://ericzimmerman.github.io/#!index.md">timeline explorer</a>.</p>
 <p>Converting the host.plaso file to a CSV file is done using Plaso&rsquo;s psort.py tool.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
-</code></pre></div><p>The command gives the output as shown below and creates the file <em>timeline.csv</em>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo docker run -v /path/to/evidence/:/data log2timeline/plaso psort -o l2tcsv -w /data/timeline.csv /data/host.plaso
+</span></span></code></pre></div><p>The command gives the output as shown below and creates the file <em>timeline.csv</em>.</p>
 <p><img src="/img/deadhost/20220521215255.png" alt=""></p>
 <p>Once the CSV is created, it can be loaded in to a tool such as Eric Zimmermans Timeline explorer, which has a very handy preset of colour mapping to easily get an overview of execution, web history and much more. A screenshot of the CSV just created is seen below.</p>
 <p><img src="/img/deadhost/20220521215624.png" alt=""></p>

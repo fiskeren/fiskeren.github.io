@@ -7,10 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-uk</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 31 May 2022 13:42:59 +0100</lastBuildDate>
-    
-	<atom:link href="https://fiskeren.github.io/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Fri, 12 Aug 2022 17:28:43 +0100</lastBuildDate><atom:link href="https://fiskeren.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Geolocating IP addresses in Velociraptor</title>
+      <link>https://fiskeren.github.io/posts/velogeoip/</link>
+      <pubDate>Fri, 12 Aug 2022 17:28:43 +0100</pubDate>
+      
+      <guid>https://fiskeren.github.io/posts/velogeoip/</guid>
+      <description>I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&amp;rsquo;ll quickly run over how to use geoip().
+This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)</description>
+    </item>
     
     <item>
       <title>Velociraptor Threathunting - Quick Introduction</title>
@@ -18,7 +24,7 @@
       <pubDate>Mon, 04 Jul 2022 11:30:36 +0100</pubDate>
       
       <guid>https://fiskeren.github.io/posts/velothreathunt/</guid>
-      <description>In my previous posts I&amp;rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &amp;ldquo;Are there baddies in the network?&amp;quot;, &amp;ldquo;How many machines have executable X on it?&amp;quot;, &amp;ldquo;Did user X log on to system Y?&amp;rdquo; etc.</description>
+      <description>In my previous posts I&amp;rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &amp;ldquo;Are there baddies in the network?&amp;rdquo;, &amp;ldquo;How many machines have executable X on it?&amp;rdquo;, &amp;ldquo;Did user X log on to system Y?&amp;rdquo; etc.</description>
     </item>
     
     <item>

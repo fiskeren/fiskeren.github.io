@@ -5,17 +5,17 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
-<meta name="description" content="I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
-Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector." />
-<meta name="keywords" content=", DFIR, forensics" />
+<meta name="description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&amp;rsquo;ll quickly run over how to use geoip().
+This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)" />
+<meta name="keywords" content=", DFIR, Threathunting, geoip" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
-<link rel="canonical" href="https://fiskeren.github.io/posts/creating_collector/" />
+<link rel="canonical" href="https://fiskeren.github.io/posts/velogeoip/" />
 
 
     <title>
         
-            Creating Standalone Artifact Collector :: fiskeren.github.io  — Technical blog made by Asger S.
+            Geolocating IP addresses in Velociraptor :: fiskeren.github.io  — Technical blog made by Asger S.
         
     </title>
 
@@ -39,29 +39,29 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
     <meta name="msapplication-TileColor" content="">
 
 
-<meta itemprop="name" content="Creating Standalone Artifact Collector">
-<meta itemprop="description" content="I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
-Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector."><meta itemprop="datePublished" content="2022-06-07T16:30:11+01:00" />
-<meta itemprop="dateModified" content="2022-06-07T16:30:11+01:00" />
-<meta itemprop="wordCount" content="797"><meta itemprop="image" content="https://fiskeren.github.io"/>
-<meta itemprop="keywords" content="DFIR,forensics," />
+<meta itemprop="name" content="Geolocating IP addresses in Velociraptor">
+<meta itemprop="description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
+This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"><meta itemprop="datePublished" content="2022-08-12T17:28:43+01:00" />
+<meta itemprop="dateModified" content="2022-08-12T17:28:43+01:00" />
+<meta itemprop="wordCount" content="468"><meta itemprop="image" content="https://fiskeren.github.io"/>
+<meta itemprop="keywords" content="DFIR,Threathunting,geoip," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://fiskeren.github.io"/>
 
-<meta name="twitter:title" content="Creating Standalone Artifact Collector"/>
-<meta name="twitter:description" content="I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
-Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector."/>
+<meta name="twitter:title" content="Geolocating IP addresses in Velociraptor"/>
+<meta name="twitter:description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
+This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"/>
 
 
 
 
-    <meta property="og:title" content="Creating Standalone Artifact Collector" />
-<meta property="og:description" content="I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.
-Velociraptor is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector." />
+    <meta property="og:title" content="Geolocating IP addresses in Velociraptor" />
+<meta property="og:description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
+This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://fiskeren.github.io/posts/creating_collector/" /><meta property="og:image" content="https://fiskeren.github.io"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-06-07T16:30:11+01:00" />
-<meta property="article:modified_time" content="2022-06-07T16:30:11+01:00" /><meta property="og:site_name" content="fiskeren.github.io" />
+<meta property="og:url" content="https://fiskeren.github.io/posts/velogeoip/" /><meta property="og:image" content="https://fiskeren.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-08-12T17:28:43+01:00" />
+<meta property="article:modified_time" content="2022-08-12T17:28:43+01:00" /><meta property="og:site_name" content="fiskeren.github.io" />
 
 
 
@@ -69,7 +69,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 
 
 
-    <meta property="article:published_time" content="2022-06-07 16:30:11 &#43;0100 BST" />
+    <meta property="article:published_time" content="2022-08-12 17:28:43 &#43;0100 BST" />
 
 
 
@@ -133,7 +133,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        4 minutes
+        3 minutes
 
         
       </p>
@@ -141,7 +141,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 
     <article>
       <h1 class="post-title">
-        <a href="https://fiskeren.github.io/posts/creating_collector/">Creating Standalone Artifact Collector</a>
+        <a href="https://fiskeren.github.io/posts/velogeoip/">Geolocating IP addresses in Velociraptor</a>
       </h1>
 
       
@@ -151,50 +151,31 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
       
 
       <div class="post-content">
-        <p>I got quite a few positive reactions to my last post about how to do deadhost collections, so I thought I wanted to follow it up with another post about how to create a standalone collector that can collect artefacts from a running host using Velociraptor.</p>
-<p><a href="https://docs.velociraptor.app/">Velociraptor</a> is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artefact collector.</p>
-<p>A standalone collector is an executable that is handy in situations where Velociraptor or other kinds of collection tools are not deployed in the environment. It could be that a consultant responding to an incident wants to give the client sysadmin a quick way to collect artefacts from a suspicious host without tool deployment.</p>
-<h2 id="running-velociraptor-in-gui-mode">Running Velociraptor in GUI mode</h2>
-<p>Velociraptor made it quite easy to create a collector without having to setup a lot beforehand. After downloading the Velociraptor executable from their <a href="https://github.com/Velocidex/velociraptor">github page</a> we can run the executable using the <code>gui</code> parameter. This will give us the Velociraptor web page, as if we were running it in server mode.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\velociraptor-v0.6.4-2-windows-amd64.exe gui
-</span></span></code></pre></div><p><img src="/img/offlinecollect/20220603171710.png" alt=""></p>
-<p>This will also automatically open up the default browser to the Velociraptor web page.</p>
-<p><img src="/img/offlinecollect/20220603172257.png" alt=""></p>
-<p>We are now ready to create the collector.</p>
-<h2 id="creating-standalone-collector">Creating standalone collector</h2>
-<p>Once the Velociraptor executable is running in gui mode, we will be able to use to use its capabilities to create a standalone collector.</p>
-<p>To do this we will go to the <em>Server Artifacts</em> menu tab and press the small paper plain icon called <em>Create offline Collector</em>. This will open op a menu with the different default artefacts Velociraptor is capable of collecting from hosts.</p>
-<p><img src="/img/offlinecollect/20220603172949.png" alt=""></p>
-<p>For this exercise I&rsquo;ll choose <em>Windows.KapeFiles.Targets</em> and <em>Windows.Memory.Acquisition</em>. KAPE is created after Eric Zimmermans KAPE (Kroll Artefact Parser and Extractor), and can collect a wide range of artefacts. Windows.Memory.Acquisition will use WinPmem to collect the memory of the machine.</p>
-<p>After selecting  <em>Windows.KapeFiles.Targets</em> and <em>Windows.Memory.Acquisition</em> go to the Configure Parameters tab at the bottom. This will show the two selected artefact modules. Select thereafter the <em>Windows.KapeFiles.Targets</em> module, which will give a wide range of artefacts to collect. I will recommend to choose the <em>_SANS_Triage</em> artefact list because this gives a wide range of artefacts, and will cover most use cases.</p>
-<p><img src="/img/offlinecollect/20220603174026.png" alt=""></p>
-<p>At the next tab <em>Configure Collection</em> there&rsquo;s multiple settings that can be set. Some of the more interesting once are the <em>Collection</em> Type and <em>Password</em>. Collection Type gives the possibility to:</p>
-<ul>
-<li>Create a zip file locally on the system</li>
-<li>Upload the zip file directly to a Google Cloud Bucket</li>
-<li>Upload to an AWS bucket</li>
-<li>Upload to a SFTP server</li>
-</ul>
-<p>This is really smart if we have ie. a timesketch setup, that automatically handles the collected artefacts being uploaded and creates a timeline in timesketch.</p>
-<p><img src="/img/offlinecollect/20220603174333.png" alt=""></p>
-<p>In the <em>Specify resources</em> tab we&rsquo;ll be able to set a limit on the resources used by the Velociraptor collector. As a standard the CPU limit is set to 100% and max execution is 600 seconds. Since we are collecting memory also, this might take a while, so I would recommend setting the max execution time a bit higher eg. 900  or 1200 seconds</p>
-<p><img src="/img/offlinecollect/20220603174843.png" alt=""></p>
-<p>Once done with the different configurations, we can go to the <em>Review</em> tab, check the configuration in JSON, and from there go to the <em>Launch</em> tab. Launch tab will check all prerequisites including downloading the WinPmem executable from the Velociraptor repository. The neat thing with this, is that Velociraptor will embed the executable in to the Collector executable, so we wont have to deal with multiple executable.</p>
-<p>Once all is green on the <em>Launch</em> tab, we can click the newly create collection and go to the <em>Uploaded Files</em> tab as shown below. Here we&rsquo;ll be able to download the newly created collector executable.</p>
-<p><img src="/img/offlinecollect/20220603175002.png" alt=""></p>
-<p>We can now copy this executable to the host we want to collect from and run it as administrator.</p>
-<p><img src="/img/offlinecollect/20220603175217.png" alt=""></p>
-<p>The collector will open up a new window showing all the different files being collected, and close it self as soon as it is done collecting. After collecting we can then copy out the zip file to our investigator host or go to the uploaded file in our Google/AWS/SFTP bucket</p>
-<p><img src="/img/offlinecollect/20220603175305.png" alt=""></p>
-<h2 id="re-configuring-the-collector-executable">Re-configuring the collector executable</h2>
-<p>Now, if we already created a offline collection executable, and we want to reconfigure the settings, we can dump out the configuration from the collector to yaml, reconfigure the settings in the yaml and then pack it into a new executable.</p>
-<p>Extract configuration from standalone collector executable:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\Collector_velociraptor-v0.6.4-2-windows-amd64.exe config show &gt; config.yaml
-</span></span></code></pre></div><p>Once the yaml file is re-configured, we can repack the collector using the following command:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\Collector_velociraptor-v0.6.4-windows-amd64.exe config repack config.yaml collector_repacked.exe
-</span></span></code></pre></div><p>We can also verify the configuration using the following command:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.\collector_repacked.exe config show
-</span></span></code></pre></div>
+        <p>I read the <a href="http://www.mashthatkey.com/2022/08/velociraptor-playground-2022-08-02.html?m=1">blog post</a> by Carlos Cajigas and saw his <a href="https://www.youtube.com/watch?v=DMj0pU6kYvg">YouTube</a> video demonstrating some really neat Velociraptor tricks including usage of the build in <code>geoip()</code> function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use <code>geoip()</code>.</p>
+<p>This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)</p>
+<h2 id="collecting-netstat-information-from-hosts">Collecting netstat information from hosts</h2>
+<p>In Velociraptor there&rsquo;s an artefact called <code>Windows.Network.Netstat</code>, which pulls an overview of connections done by Windows hosts  to any IPs, just as if we had opened a command line prompt and typed in <code>netstat</code> on a host. That way we can see what the hosts actually connects to at the moment. Below is a picture of the artefact in Velociraptor.</p>
+<p><img src="/img/velogeoip/Pasted_image_20220812193744.png" alt=""></p>
+<p>Once the hunt has run on the host(s). The output should look like the image below, which is multiple pages long.</p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-40-25.png%5D" alt=""></p>
+<h2 id="geo-locating-remote-ips">Geo locating remote IPs</h2>
+<p>from the picture above we can see that the <code>netstat</code> output shows <code>Raddr.IP</code> which is the remote IP or the IP of the server that the host is connecting to.</p>
+<p>Looking at an IP and telling where that IP is located in the world can be hard, so to make that easier we can use the GeoLite2 Free database from <a href="https://www.maxmind.com/en/accounts/current/geoip/downloads">Maxmind</a>. This is a database that can match an IP up against ie. country, city or ASN number. In this blog I am going to use the <code>GeoLite2-City.mmdb</code> database.</p>
+<p>With the database downloaded from GeoLite2, we can go ahead an edit the <code>Windows.Network.Netstat</code> artefact output.</p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-50-52.png%5D" alt=""></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span>,<span style="color:#66d9ef">Timestamp</span>,Pid,Name,Status,<span style="color:#f92672">`</span>Laddr.IP<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>Laddr.Port<span style="color:#f92672">`</span>,
+</span></span><span style="display:flex;"><span>geoip(ip<span style="color:#f92672">=`</span>Raddr.IP<span style="color:#f92672">`</span>,db<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;C:\\GeoLite2-City.mmdb&#39;</span>).country.<span style="color:#66d9ef">names</span>.en <span style="color:#66d9ef">AS</span> Country,<span style="color:#f92672">`</span>Raddr.IP<span style="color:#f92672">`</span>,<span style="color:#f92672">`</span>Raddr.Port<span style="color:#f92672">`</span>,Fqdn
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> Status <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;ESTAB&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Country <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;United States&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> Country
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
+</span></span></code></pre></div><p>The VQL statement above grabs the <code>Timestamp</code>, Process ID (<code>Pid</code>), Name of the process(<code>Name</code>), <code>Status</code> (example: established, connecting), Local IP(<code>Laddr.IP</code>), Local port (<code>Laddr.Port</code>, Remote IP(<code>Raddr.IP</code>), Remote port(<code>Raddr.Port</code>) and the host name of the computer (<code>Fqdn</code>, and then enriches it using the function caled <code>geoip()</code> that fetches the mmdb GeoLite database we downloaded. It then queries the remote IPs up against it to get a country name, looks for only established connections, filters out countries that are not the US and then orders it by how many connections there are.</p>
+<p>The query gives the following output.</p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-57-20.png" alt="">
+<img src="/img/velogeoip/Screenshot_2022-08-12_20-07-46.png" alt="">
+As seen above, there are a couple of connections to Ireland, some to Denmark and then some to the UK. This could give a really easy overview off the different countries and IPs that the hosts in the environment are connecting to.</p>
+
       </div>
     </article>
 
@@ -206,7 +187,8 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
 
         <span class="tag"><a href="https://fiskeren.github.io/tags/dfir/">DFIR</a></span>
-        <span class="tag"><a href="https://fiskeren.github.io/tags/forensics/">forensics</a></span>
+        <span class="tag"><a href="https://fiskeren.github.io/tags/threathunting/">Threathunting</a></span>
+        <span class="tag"><a href="https://fiskeren.github.io/tags/geoip/">geoip</a></span>
         
     </p>
 
@@ -220,7 +202,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        797 Words
+        468 Words
       </p>
 
       <p>
@@ -231,7 +213,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
           <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
         
-          2022-06-07 16:30
+          2022-08-12 17:28
         
 
          
@@ -242,7 +224,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
       <hr />
       <div class="sharing-buttons">
         
-<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
   <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
     </div>
@@ -250,7 +232,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
   <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
       <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
@@ -259,7 +241,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Creating%20Standalone%20Artifact%20Collector&amp;caption=Creating%20Standalone%20Artifact%20Collector&amp;canonicalUrl=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Geolocating%20IP%20addresses%20in%20Velociraptor&amp;caption=Geolocating%20IP%20addresses%20in%20Velociraptor&amp;canonicalUrl=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
   <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
     <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
@@ -268,7 +250,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="mailto:?subject=Creating%20Standalone%20Artifact%20Collector&amp;body=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+<a class="resp-sharing-button__link" href="mailto:?subject=Geolocating%20IP%20addresses%20in%20Velociraptor&amp;body=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
   <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
     </div>
@@ -276,7 +258,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f&amp;media=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f;description=Creating%20Standalone%20Artifact%20Collector" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f&amp;media=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f;description=Geolocating%20IP%20addresses%20in%20Velociraptor" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
   <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
     </div>
@@ -284,7 +266,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f&amp;title=Creating%20Standalone%20Artifact%20Collector&amp;summary=Creating%20Standalone%20Artifact%20Collector&amp;source=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f&amp;title=Geolocating%20IP%20addresses%20in%20Velociraptor&amp;summary=Geolocating%20IP%20addresses%20in%20Velociraptor&amp;source=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
   <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
     </div>
@@ -292,7 +274,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f&amp;resubmit=true&amp;title=Creating%20Standalone%20Artifact%20Collector" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f&amp;resubmit=true&amp;title=Geolocating%20IP%20addresses%20in%20Velociraptor" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
   <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
     </div>
@@ -300,7 +282,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f;title=Creating%20Standalone%20Artifact%20Collector" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f;title=Geolocating%20IP%20addresses%20in%20Velociraptor" target="_blank" rel="noopener" aria-label="" title="Share on xing">
   <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
     </div>
@@ -308,7 +290,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="whatsapp://send?text=Creating%20Standalone%20Artifact%20Collector%20https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Geolocating%20IP%20addresses%20in%20Velociraptor%20https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
   <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
     </div>
@@ -316,7 +298,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f&amp;t=Creating%20Standalone%20Artifact%20Collector" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f&amp;t=Geolocating%20IP%20addresses%20in%20Velociraptor" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
   <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
     </div>
@@ -324,7 +306,7 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 </a>
 
 
-<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Creating%20Standalone%20Artifact%20Collector&amp;url=https%3a%2f%2ffiskeren.github.io%2fposts%2fcreating_collector%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Geolocating%20IP%20addresses%20in%20Velociraptor&amp;url=https%3a%2f%2ffiskeren.github.io%2fposts%2fvelogeoip%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
   <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
     </div>
@@ -344,18 +326,11 @@ Velociraptor is an awesome DFIR tool made to efficiently get visibility into end
 
         <div class="pagination__buttons">
             
-            <span class="button previous">
-                <a href="https://fiskeren.github.io/posts/velothreathunt/">
-                    <span class="button__icon">←</span>
-                    <span class="button__text">Velociraptor Threathunting - Quick Introduction</span>
-                </a>
-            </span>
-            
 
             
             <span class="button next">
-                <a href="https://fiskeren.github.io/posts/deadhostinvestigation/">
-                    <span class="button__text">Deadhost Investigation and Super Timeline</span>
+                <a href="https://fiskeren.github.io/posts/velothreathunt/">
+                    <span class="button__text">Velociraptor Threathunting - Quick Introduction</span>
                     <span class="button__icon">→</span>
                 </a>
             </span>
