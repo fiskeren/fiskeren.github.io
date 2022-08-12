@@ -26,7 +26,7 @@ from the picture above we can see that the `netstat` output shows `Raddr.IP` whi
 
 Looking at an IP and telling where that IP is located in the world can be hard, so to make that easier we can use the GeoLite2 Free database from [Maxmind](https://www.maxmind.com/en/accounts/current/geoip/downloads). This is a database that can match an IP up against ie. country, city or ASN number. In this blog I am going to use the `GeoLite2-City.mmdb` database.
 
-With the database downloaded from GeoLite2, we can go ahead an edit the `Windows.Network.Netstat` artefact output.
+With the database downloaded from GeoLite2, we can go ahead an edit the `Windows.Network.Netstat` artefact Notebook.
 
 ![](/img/velogeoip/Screenshot_2022-08-12_19-50-52.png])
 
