@@ -20,7 +20,7 @@ In Velociraptor there's an artefact called `Windows.Network.Netstat`, which pull
 
 Once the hunt has run on the host(s). The output should look like the image below, which is multiple pages long. 
 
-![](/img/velogeoip/Screenshot_2022-08-12_19-40-25.png])
+![](/img/velogeoip/Screenshot_2022-08-12_19-40-25.png)
 ## Geo locating remote IPs
 From the picture above we can see that the `netstat` output shows `Raddr.IP` which is the remote IP that the host is connecting to.
 
