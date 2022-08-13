@@ -41,7 +41,15 @@ This could be useful if you for example know hosts normally only connects to IPs
 <p><img src="/img/velogeoip/Screenshot_2022-08-12_19-57-20.png" alt="">
 <img src="/img/velogeoip/Screenshot_2022-08-12_20-07-46.png" alt="">
 As seen above, there are a couple of connections to Ireland, some to Denmark and then some to the UK. This could give a really easy overview off the different countries and IPs that the hosts in the environment are connecting to.</p>
-]]></content>
+<p><strong>EDIT 13/08/2022:</strong> I&rsquo;ve was asked if its possible to add city to the IP&rsquo;s also, so the VQL below shows how to use the <code>geoip()</code> to add city name.</p>
+<pre tabindex="0"><code>SELECT count() AS Count,Timestamp,Pid,Name,Status,`Laddr.IP`,`Laddr.Port`,
+geoip(ip=`Raddr.IP`,db=&#39;C:\\GeoLite2-City.mmdb&#39;).country.names.en AS Country,geoip(ip=`Raddr.IP`,db=&#39;C:\\GeoLite2-City.mmdb&#39;).city.names.en AS City,`Raddr.IP`,`Raddr.Port`,Fqdn
+FROM source()
+WHERE Status =~ &#34;ESTAB&#34;
+AND NOT Country =~ &#34;United States&#34;
+GROUP BY City
+ORDER BY Count
+</code></pre>]]></content>
         </item>
         
         <item>

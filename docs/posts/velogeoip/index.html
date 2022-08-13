@@ -43,7 +43,7 @@ This could be useful if you for example know hosts normally only connects to IPs
 <meta itemprop="description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
 This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"><meta itemprop="datePublished" content="2022-08-12T17:28:43+01:00" />
 <meta itemprop="dateModified" content="2022-08-12T17:28:43+01:00" />
-<meta itemprop="wordCount" content="432"><meta itemprop="image" content="https://fiskeren.github.io"/>
+<meta itemprop="wordCount" content="488"><meta itemprop="image" content="https://fiskeren.github.io"/>
 <meta itemprop="keywords" content="DFIR,Threathunting,geoip," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://fiskeren.github.io"/>
@@ -175,7 +175,15 @@ This could be useful if you for example know hosts normally only connects to IPs
 <p><img src="/img/velogeoip/Screenshot_2022-08-12_19-57-20.png" alt="">
 <img src="/img/velogeoip/Screenshot_2022-08-12_20-07-46.png" alt="">
 As seen above, there are a couple of connections to Ireland, some to Denmark and then some to the UK. This could give a really easy overview off the different countries and IPs that the hosts in the environment are connecting to.</p>
-
+<p><strong>EDIT 13/08/2022:</strong> I&rsquo;ve was asked if its possible to add city to the IP&rsquo;s also, so the VQL below shows how to use the <code>geoip()</code> to add city name.</p>
+<pre tabindex="0"><code>SELECT count() AS Count,Timestamp,Pid,Name,Status,`Laddr.IP`,`Laddr.Port`,
+geoip(ip=`Raddr.IP`,db=&#39;C:\\GeoLite2-City.mmdb&#39;).country.names.en AS Country,geoip(ip=`Raddr.IP`,db=&#39;C:\\GeoLite2-City.mmdb&#39;).city.names.en AS City,`Raddr.IP`,`Raddr.Port`,Fqdn
+FROM source()
+WHERE Status =~ &#34;ESTAB&#34;
+AND NOT Country =~ &#34;United States&#34;
+GROUP BY City
+ORDER BY Count
+</code></pre>
       </div>
     </article>
 
@@ -202,7 +210,7 @@ As seen above, there are a couple of connections to Ireland, some to Denmark and
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        432 Words
+        488 Words
       </p>
 
       <p>
