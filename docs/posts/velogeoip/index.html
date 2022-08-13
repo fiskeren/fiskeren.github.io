@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
 <meta name="description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&amp;rsquo;ll quickly run over how to use geoip().
-This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)" />
+This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)" />
 <meta name="keywords" content=", DFIR, Threathunting, geoip" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -41,23 +41,23 @@ This could be useful if you know hosts normally only connects to IPs located in 
 
 <meta itemprop="name" content="Geolocating IP addresses in Velociraptor">
 <meta itemprop="description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
-This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"><meta itemprop="datePublished" content="2022-08-12T17:28:43+01:00" />
+This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"><meta itemprop="datePublished" content="2022-08-12T17:28:43+01:00" />
 <meta itemprop="dateModified" content="2022-08-12T17:28:43+01:00" />
-<meta itemprop="wordCount" content="468"><meta itemprop="image" content="https://fiskeren.github.io"/>
+<meta itemprop="wordCount" content="459"><meta itemprop="image" content="https://fiskeren.github.io"/>
 <meta itemprop="keywords" content="DFIR,Threathunting,geoip," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://fiskeren.github.io"/>
 
 <meta name="twitter:title" content="Geolocating IP addresses in Velociraptor"/>
 <meta name="twitter:description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
-This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"/>
+This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)"/>
 
 
 
 
     <meta property="og:title" content="Geolocating IP addresses in Velociraptor" />
 <meta property="og:description" content="I read the blog post by Carlos Cajigas and saw his YouTube video demonstrating some really neat Velociraptor tricks including usage of the build in geoip() function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use geoip().
-This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)" />
+This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fiskeren.github.io/posts/velogeoip/" /><meta property="og:image" content="https://fiskeren.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-08-12T17:28:43+01:00" />
@@ -152,14 +152,14 @@ This could be useful if you know hosts normally only connects to IPs located in 
 
       <div class="post-content">
         <p>I read the <a href="http://www.mashthatkey.com/2022/08/velociraptor-playground-2022-08-02.html?m=1">blog post</a> by Carlos Cajigas and saw his <a href="https://www.youtube.com/watch?v=DMj0pU6kYvg">YouTube</a> video demonstrating some really neat Velociraptor tricks including usage of the build in <code>geoip()</code> function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&rsquo;ll quickly run over how to use <code>geoip()</code>.</p>
-<p>This could be useful if you know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)</p>
+<p>This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)</p>
 <h2 id="collecting-netstat-information-from-hosts">Collecting netstat information from hosts</h2>
-<p>In Velociraptor there&rsquo;s an artefact called <code>Windows.Network.Netstat</code>, which pulls an overview of connections done by Windows hosts  to any IPs, just as if we had opened a command line prompt and typed in <code>netstat</code> on a host. That way we can see what the hosts actually connects to at the moment. Below is a picture of the artefact in Velociraptor.</p>
+<p>In Velociraptor there&rsquo;s an artefact called <code>Windows.Network.Netstat</code>, which pulls an overview of connections done by Windows hosts - just as if we had opened a command line prompt and typed in <code>netstat</code>. That way we can see what the hosts actually connects to at the moment. Below is a picture of the artefact in Velociraptor.</p>
 <p><img src="/img/velogeoip/Pasted_image_20220812193744.png" alt=""></p>
 <p>Once the hunt has run on the host(s). The output should look like the image below, which is multiple pages long.</p>
 <p><img src="/img/velogeoip/Screenshot_2022-08-12_19-40-25.png%5D" alt=""></p>
 <h2 id="geo-locating-remote-ips">Geo locating remote IPs</h2>
-<p>from the picture above we can see that the <code>netstat</code> output shows <code>Raddr.IP</code> which is the remote IP or the IP of the server that the host is connecting to.</p>
+<p>From the picture above we can see that the <code>netstat</code> output shows <code>Raddr.IP</code> which is the remote IP that the host is connecting to.</p>
 <p>Looking at an IP and telling where that IP is located in the world can be hard, so to make that easier we can use the GeoLite2 Free database from <a href="https://www.maxmind.com/en/accounts/current/geoip/downloads">Maxmind</a>. This is a database that can match an IP up against ie. country, city or ASN number. In this blog I am going to use the <code>GeoLite2-City.mmdb</code> database.</p>
 <p>With the database downloaded from GeoLite2, we can go ahead an edit the <code>Windows.Network.Netstat</code> artefact Notebook.</p>
 <p><img src="/img/velogeoip/Screenshot_2022-08-12_19-50-52.png%5D" alt=""></p>
@@ -202,7 +202,7 @@ As seen above, there are a couple of connections to Ireland, some to Denmark and
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        468 Words
+        459 Words
       </p>
 
       <p>
