@@ -48,15 +48,13 @@ The query gives the following output.
 ![](/img/velogeoip/Screenshot_2022-08-12_20-07-46.png)
 As seen above, there are a couple of connections to Ireland, some to Denmark and then some to the UK. This could give a really easy overview off the different countries and IPs that the hosts in the environment are connecting to.
 
-**EDIT 13/08/2022:** I've was asked if its possible to add city to the IP's also, so the VQL below shows how to use the `geoip()` to add city name.
+**EDIT 13/08/2022:** I've was asked if its possible to add city and autonomous system number (ASN) to the IP's also, so the VQL below shows how to use the `geoip()` to add city name. For the ASN number, I've downloaded the other free Maxmind database `GeoLite2-ASN.mmdb`.
 
 ```sql
-SELECT count() AS Count,Timestamp,Pid,Name,Status,`Laddr.IP`,`Laddr.Port`,
-geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-City.mmdb').country.names.en AS Country,geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-City.mmdb').city.names.en AS City,`Raddr.IP`,`Raddr.Port`,Fqdn
+SELECT Timestamp,Pid,Name,Status,`Laddr.IP`,`Laddr.Port`,`Raddr.IP`,
+geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-City.mmdb').country.names.en AS Country,geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-City.mmdb').city.names.en AS City,geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-ASN.mmdb').autonomous_system_organization AS `ASN Org`,geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-ASN.mmdb').autonomous_system_number AS `ASN Number`,
+`Raddr.Port`,Fqdn
 FROM source()
 WHERE Status =~ "ESTAB"
-AND NOT Country =~ "United States"
-GROUP BY City
-ORDER BY Count
 ```
 
