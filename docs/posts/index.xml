@@ -23,7 +23,7 @@ This could be useful if you for example know hosts normally only connects to IPs
 <p>In Velociraptor there&rsquo;s an artefact called <code>Windows.Network.Netstat</code>, which pulls an overview of connections done by Windows hosts - just as if we had opened a command line prompt and typed in <code>netstat</code>. That way we can see what the hosts actually connects to at the moment. Below is a picture of the artefact in Velociraptor.</p>
 <p><img src="/img/velogeoip/Pasted_image_20220812193744.png" alt=""></p>
 <p>Once the hunt has run on the host(s). The output should look like the image below, which is multiple pages long.</p>
-<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-40-25.png%5D" alt=""></p>
+<p><img src="/img/velogeoip/Screenshot_2022-08-12_19-40-25.png" alt=""></p>
 <h2 id="geo-locating-remote-ips">Geo locating remote IPs</h2>
 <p>From the picture above we can see that the <code>netstat</code> output shows <code>Raddr.IP</code> which is the remote IP that the host is connecting to.</p>
 <p>Looking at an IP and telling where that IP is located in the world can be hard, so to make that easier we can use the GeoLite2 Free database from <a href="https://www.maxmind.com/en/accounts/current/geoip/downloads">Maxmind</a>. This is a database that can match an IP up against ie. country, city or ASN number. In this blog I am going to use the <code>GeoLite2-City.mmdb</code> database.</p>
