@@ -50,7 +50,7 @@ As seen above, there are a couple of connections to Ireland, some to Denmark and
 
 **EDIT 13/08/2022:** I've was asked if its possible to add city to the IP's also, so the VQL below shows how to use the `geoip()` to add city name.
 
-```
+```sql
 SELECT count() AS Count,Timestamp,Pid,Name,Status,`Laddr.IP`,`Laddr.Port`,
 geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-City.mmdb').country.names.en AS Country,geoip(ip=`Raddr.IP`,db='C:\\GeoLite2-City.mmdb').city.names.en AS City,`Raddr.IP`,`Raddr.Port`,Fqdn
 FROM source()
