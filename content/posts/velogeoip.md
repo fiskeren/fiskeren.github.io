@@ -28,7 +28,7 @@ Looking at an IP and telling where that IP is located in the world can be hard, 
 
 Now with the database downloaded from GeoLite2, we can go ahead and start using the `geoip()` function build in to Velociraptor. The function will take a list of IPs and look those up in the MMDB given.
 
-![](/img/velogeoip/Screenshot_2022-08-12_19-50-52.png])
+![](/img/velogeoip/Screenshot_2022-08-12_19-50-52.png)
 
 ```sql
 SELECT count() AS Count,Timestamp,Pid,Name,Status,`Laddr.IP`,`Laddr.Port`,
