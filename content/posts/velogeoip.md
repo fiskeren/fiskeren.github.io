@@ -21,12 +21,12 @@ In Velociraptor there's an artefact called `Windows.Network.Netstat`, which pull
 Once the hunt has run on the host(s). The output should look like the image below, which is multiple pages long. 
 
 ![](/img/velogeoip/Screenshot_2022-08-12_19-40-25.png)
-## Geo locating remote IPs
+## Geolocating remote IPs
 From the picture above we can see that the `netstat` output shows `Raddr.IP` which is the remote IP that the host is connecting to.
 
 Looking at an IP and telling where that IP is located in the world can be hard, so to make that easier we can use the GeoLite2 Free database from [Maxmind](https://www.maxmind.com/en/accounts/current/geoip/downloads). This is a database that can match an IP up against ie. country, city or ASN number. In this blog I am going to use the `GeoLite2-City.mmdb` database.
 
-With the database downloaded from GeoLite2, we can go ahead an edit the `Windows.Network.Netstat` artefact Notebook.
+Now with the database downloaded from GeoLite2, we can go ahead and start using the `geoip()` function build in to Velociraptor. The function will take a list of IPs and look those up in the MMDB given.
 
 ![](/img/velogeoip/Screenshot_2022-08-12_19-50-52.png])
 
@@ -40,7 +40,7 @@ GROUP BY Country
 ORDER BY Count
 ```
 
-The VQL statement above grabs the `Timestamp`, Process ID (`Pid`), Name of the process(`Name`), `Status` (example: established, connecting), Local IP(`Laddr.IP`), Local port (`Laddr.Port`, Remote IP(`Raddr.IP`), Remote port(`Raddr.Port`) and the host name of the computer (`Fqdn`, and then enriches it using the function caled `geoip()` that fetches the mmdb GeoLite database we downloaded. It then queries the remote IPs up against it to get a country name, looks for only established connections, filters out countries that are not the US and then orders it by how many connections there are.
+The VQL statement above will use the `geoip()` function to add country names to the artefacts collected. After that it will look for only *ESTABLISHED* connections, and filter out connections to the US. It then groups by country and orders by count.
 
 The query gives the following output.
 
