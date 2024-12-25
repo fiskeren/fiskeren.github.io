@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Forensics on fiskeren.github.io</title>
-    <link>http://localhost:1313/tags/forensics/</link>
+    <link>https://fiskeren.github.io/tags/forensics/</link>
     <description>Recent content in Forensics on fiskeren.github.io</description>
     <generator>Hugo</generator>
     <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Mon, 04 Jul 2022 14:31:56 +0100</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/forensics/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Dec 2024 16:16:24 +0100</lastBuildDate>
+    <atom:link href="https://fiskeren.github.io/tags/forensics/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Creating Standalone Artifact Collector</title>
-      <link>http://localhost:1313/posts/creating_collector/</link>
+      <link>https://fiskeren.github.io/posts/creating_collector/</link>
       <pubDate>Tue, 07 Jun 2022 16:30:11 +0100</pubDate>
-      <guid>http://localhost:1313/posts/creating_collector/</guid>
+      <guid>https://fiskeren.github.io/posts/creating_collector/</guid>
       <description>&lt;p&gt;I received several positive reactions to my last post about how to perform dead host collections. Therefore, I wanted to follow it up with another post on how to create a standalone collector that can gather artefacts from a running host using Velociraptor.&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://docs.velociraptor.app/&#34;&gt;Velociraptor&lt;/a&gt; is an excellent DFIR tool designed to efficiently provide visibility into endpoints. It can operate in a server-agent setup, functioning essentially as an EDR—without the AV, of course—with thousands of hosts. Additionally, it can also serve as a standalone artefact collector.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Deadhost Investigation and Super Timeline</title>
-      <link>http://localhost:1313/posts/deadhostinvestigation/</link>
+      <link>https://fiskeren.github.io/posts/deadhostinvestigation/</link>
       <pubDate>Sun, 22 May 2022 09:45:02 +0100</pubDate>
-      <guid>http://localhost:1313/posts/deadhostinvestigation/</guid>
+      <guid>https://fiskeren.github.io/posts/deadhostinvestigation/</guid>
       <description>&lt;p&gt;I recently attended a &lt;a href=&#34;https://www.sans.org/cyber-security-courses/advanced-incident-response-threat-hunting-training/&#34;&gt;SANS 508&lt;/a&gt; course and got time to play around with &lt;a href=&#34;https://docs.velociraptor.app/&#34;&gt;Velociraptor&lt;/a&gt;, which is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artifact collector.&lt;/p&gt;&#xA;&lt;p&gt;In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executable as a artefact collector to quickly collect Windows artefacts from a dead host image. After collecting the artefacts, I will show how to create a super timeline using &lt;a href=&#34;https://plaso.readthedocs.io/en/latest/sources/user/Using-log2timeline.html&#34;&gt;Plaso log2timeline&lt;/a&gt; from the evidence collected.&lt;/p&gt;</description>
     </item>
   </channel>

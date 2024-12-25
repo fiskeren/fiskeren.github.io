@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Geoip on fiskeren.github.io</title>
-    <link>http://localhost:1313/tags/geoip/</link>
+    <link>https://fiskeren.github.io/tags/geoip/</link>
     <description>Recent content in Geoip on fiskeren.github.io</description>
     <generator>Hugo</generator>
     <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Sat, 13 Aug 2022 19:55:05 +0100</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/geoip/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://fiskeren.github.io/tags/geoip/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Geolocating IP addresses in Velociraptor</title>
-      <link>http://localhost:1313/posts/velogeoip/</link>
+      <link>https://fiskeren.github.io/posts/velogeoip/</link>
       <pubDate>Fri, 12 Aug 2022 17:28:43 +0100</pubDate>
-      <guid>http://localhost:1313/posts/velogeoip/</guid>
+      <guid>https://fiskeren.github.io/posts/velogeoip/</guid>
       <description>&lt;p&gt;I read the &lt;a href=&#34;http://www.mashthatkey.com/2022/08/velociraptor-playground-2022-08-02.html?m=1&#34;&gt;blog post&lt;/a&gt; by Carlos Cajigas and saw his &lt;a href=&#34;https://www.youtube.com/watch?v=DMj0pU6kYvg&#34;&gt;YouTube&lt;/a&gt; video demonstrating some really neat Velociraptor tricks including usage of the build in &lt;code&gt;geoip()&lt;/code&gt; function, which can be used to enrich artefacts in Velociraptor hunts. This inspired me to write this small blog post where I&amp;rsquo;ll quickly run over how to use &lt;code&gt;geoip()&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;p&gt;This could be useful if you for example know hosts normally only connects to IPs located in the US, Ireland and UK and want to spot that specific process that connects to something else, or if you are on the lookout for processes connecting to hosts in a specific country etc - insert your own use case :-)&lt;/p&gt;</description>
     </item>
   </channel>
