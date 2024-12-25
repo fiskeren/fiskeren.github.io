@@ -3,10 +3,12 @@
     <head>
         <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
-<meta name="description" content="In my previous posts I&amp;rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &amp;ldquo;Are there baddies in the network?&amp;rdquo;, &amp;ldquo;How many machines have executable X on it?&amp;rdquo;, &amp;ldquo;Did user X log on to system Y?&amp;rdquo; etc." />
-<meta name="keywords" content=", DFIR, Threathunting" />
+<meta name="description" content="In my previous posts, I demonstrated how to use Velociraptor to extract artefacts from dead hosts. However, the real strength of Velociraptor lies in its ability to conduct searches across multiple hosts for artefacts. This is particularly useful when responders are trying to answer questions such as, &ldquo;Are there baddies in the network?&rdquo; &ldquo;How many machines have executable X on them?&rdquo; and &ldquo;Did user X log on to system Y?&rdquo; In this blog post, I will provide a quick introduction to using Velociraptor to address these types of questions.
+" />
+<meta name="keywords" content="blog, dfir, forensics, incident, response, incident response, DFIR, Threathunting" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
 <link rel="canonical" href="https://fiskeren.github.io/posts/velothreathunt/" />
@@ -14,18 +16,17 @@
 
     <title>
         
-            Velociraptor Threathunting - Quick Introduction :: fiskeren.github.io  — Technical blog made by Asger S.
+            Velociraptor Threathunting - Quick Introduction :: fiskeren.github.io 
         
     </title>
 
 
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
-    type="text/css">
 
 
+  <link rel="stylesheet" href="/main.min.244183cde1a38e0b08f82c11791181288f9aac1cc9618cd6f4e9e7710c5768ba.css" integrity="sha256-JEGDzeGjjgsI&#43;CwReRGBKI&#43;arBzJYYzW9OnncQxXaLo=" crossorigin="anonymous">
 
-<link rel="stylesheet" href="/main.4e5c639214707eff609bb55fe49e183dee42258a73bc90e4cc7b0a84f900798a.css">
+
 
 
 
@@ -38,27 +39,34 @@
     <meta name="msapplication-TileColor" content="">
 
 
-<meta itemprop="name" content="Velociraptor Threathunting - Quick Introduction">
-<meta itemprop="description" content="In my previous posts I&rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &ldquo;Are there baddies in the network?&rdquo;, &ldquo;How many machines have executable X on it?&rdquo;, &ldquo;Did user X log on to system Y?&rdquo; etc."><meta itemprop="datePublished" content="2022-07-04T11:30:36+01:00" />
-<meta itemprop="dateModified" content="2022-07-04T11:30:36+01:00" />
-<meta itemprop="wordCount" content="1367"><meta itemprop="image" content="https://fiskeren.github.io"/>
-<meta itemprop="keywords" content="DFIR,Threathunting," />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://fiskeren.github.io"/>
 
-<meta name="twitter:title" content="Velociraptor Threathunting - Quick Introduction"/>
-<meta name="twitter:description" content="In my previous posts I&rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &ldquo;Are there baddies in the network?&rdquo;, &ldquo;How many machines have executable X on it?&rdquo;, &ldquo;Did user X log on to system Y?&rdquo; etc."/>
+  <meta itemprop="name" content="Velociraptor Threathunting - Quick Introduction">
+  <meta itemprop="description" content="In my previous posts, I demonstrated how to use Velociraptor to extract artefacts from dead hosts. However, the real strength of Velociraptor lies in its ability to conduct searches across multiple hosts for artefacts. This is particularly useful when responders are trying to answer questions such as, “Are there baddies in the network?” “How many machines have executable X on them?” and “Did user X log on to system Y?” In this blog post, I will provide a quick introduction to using Velociraptor to address these types of questions.">
+  <meta itemprop="datePublished" content="2022-07-04T11:30:36+01:00">
+  <meta itemprop="dateModified" content="2022-07-04T14:34:57+01:00">
+  <meta itemprop="wordCount" content="1304">
+  <meta itemprop="image" content="https://fiskeren.github.io/">
+  <meta itemprop="keywords" content="DFIR,Threathunting">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://fiskeren.github.io/">
+  <meta name="twitter:title" content="Velociraptor Threathunting - Quick Introduction">
+  <meta name="twitter:description" content="In my previous posts, I demonstrated how to use Velociraptor to extract artefacts from dead hosts. However, the real strength of Velociraptor lies in its ability to conduct searches across multiple hosts for artefacts. This is particularly useful when responders are trying to answer questions such as, “Are there baddies in the network?” “How many machines have executable X on them?” and “Did user X log on to system Y?” In this blog post, I will provide a quick introduction to using Velociraptor to address these types of questions.">
 
 
 
-
-    <meta property="og:title" content="Velociraptor Threathunting - Quick Introduction" />
-<meta property="og:description" content="In my previous posts I&rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &ldquo;Are there baddies in the network?&rdquo;, &ldquo;How many machines have executable X on it?&rdquo;, &ldquo;Did user X log on to system Y?&rdquo; etc." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://fiskeren.github.io/posts/velothreathunt/" /><meta property="og:image" content="https://fiskeren.github.io"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-07-04T11:30:36+01:00" />
-<meta property="article:modified_time" content="2022-07-04T11:30:36+01:00" /><meta property="og:site_name" content="fiskeren.github.io" />
-
+    <meta property="og:url" content="https://fiskeren.github.io/posts/velothreathunt/">
+  <meta property="og:site_name" content="fiskeren.github.io">
+  <meta property="og:title" content="Velociraptor Threathunting - Quick Introduction">
+  <meta property="og:description" content="In my previous posts, I demonstrated how to use Velociraptor to extract artefacts from dead hosts. However, the real strength of Velociraptor lies in its ability to conduct searches across multiple hosts for artefacts. This is particularly useful when responders are trying to answer questions such as, “Are there baddies in the network?” “How many machines have executable X on them?” and “Did user X log on to system Y?” In this blog post, I will provide a quick introduction to using Velociraptor to address these types of questions.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-07-04T11:30:36+01:00">
+    <meta property="article:modified_time" content="2022-07-04T14:34:57+01:00">
+    <meta property="article:tag" content="DFIR">
+    <meta property="article:tag" content="Threathunting">
+    <meta property="og:image" content="https://fiskeren.github.io/">
 
 
 
@@ -66,6 +74,8 @@
 
 
     <meta property="article:published_time" content="2022-07-04 11:30:36 &#43;0100 &#43;0100" />
+
+
 
 
 
@@ -89,7 +99,8 @@
     <div class="logo">
         
             <span class="logo__mark">></span>
-            <span class="logo__text">Asger S. - fiskeren.github.io</span>
+            <span class="logo__text ">
+                Asger Strunk - fiskeren.github.io</span>
             <span class="logo__cursor" style=
                   "
                    
@@ -101,7 +112,6 @@
 
 
         <span class="header__right">
-            
                 <nav class="menu">
     <ul class="menu__inner"><li><a href="/about">About</a></li><li><a href="/posts">Blog</a></li>
     </ul>
@@ -113,7 +123,6 @@
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
                     </svg>
                 </span>
-            
         </span>
     </span>
 </header>
@@ -147,47 +156,47 @@
       
 
       <div class="post-content">
-        <p>In my previous posts I&rsquo;ve shown how to use Velociraptor to extract artefacts from dead hosts, but the real strength of Velociraptor is in its capability to do searches across multiple hosts for artefacts. This is really useful when responders are trying to determine the questions such as &ldquo;Are there baddies in the network?&rdquo;, &ldquo;How many machines have executable X on it?&rdquo;, &ldquo;Did user X log on to system Y?&rdquo; etc. In this blog post I will try to give a quick introduction to how to use Velociraptor to answer those kind of questions.</p>
+        <p>In my previous posts, I demonstrated how to use Velociraptor to extract artefacts from dead hosts. However, the real strength of Velociraptor lies in its ability to conduct searches across multiple hosts for artefacts. This is particularly useful when responders are trying to answer questions such as, &ldquo;Are there baddies in the network?&rdquo; &ldquo;How many machines have executable X on them?&rdquo; and &ldquo;Did user X log on to system Y?&rdquo; In this blog post, I will provide a quick introduction to using Velociraptor to address these types of questions.</p>
 <h2 id="quick-intro-to-vql">Quick intro to VQL</h2>
-<p>All queries Velociraptor does are done using the Velociraptor Query language or VQL, which is very much like a simpler version of SQL, and therefore also something most people will be able to read and learn very easily. Take the example below - this query will take all columns from the <code>Info()</code> artefacts and show it to the responder.</p>
+<p>All queries the Velociraptor performs are executed using the Velociraptor Query Language, or VQL, which is essentially a simpler version of SQL. Therefore, most people should find it easy to read and learn. For instance, the query below retrieves all columns from the <code>Info()</code> artefacts and presents them to the responder.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> info()
-</span></span></code></pre></div><p>The output will be something like the following:</p>
+</span></span></code></pre></div><p>The output will resemble something like this:</p>
 <p><img src="/img/velothreathunt/20220704115223.png" alt=""></p>
-<p>If you did this over multiple machines using the &lsquo;Hunt Manager&rsquo; in Velociraptor, you could expand the query to get an overview of how many different versions of OS&rsquo; you have. To do this, We will create a hunt using the <code>Generic.Client.Info</code> artefacts, and query that across all machines. Once its done, the information received can we seen in the &lsquo;Notebook&rsquo; tab of the hunt:</p>
+<p>If you perform this across multiple machines using the &lsquo;Hunt Manager&rsquo; in Velociraptor, you can expand the query to get an overview of how many different versions of OS you have. To do this, we will create a hunt using the <code>Generic.Client.Info</code> artefacts and query that across all machines. Once it&rsquo;s done, the information received can be seen in the &lsquo;Notebook&rsquo; tab of the hunt:</p>
 <p><img src="/img/velothreathunt/20220704120815.png" alt=""></p>
-<p>Now, this will give a table with a row for each machine, which can be handy, but what if there is 1000 endpoints in the environment, the table will probably not be that easy to get an overview off. Therefore, lets edit the VQL statement to make it a bit easier to read. Do that by pressing the small edit button in the top of the notebook. The default query will probably look something like this:</p>
+<p>Now, this will provide a table with a row for each machine, which can be handy. However, if there are 1000 endpoints in the environment, the table may not be very easy to overview. Therefore, let&rsquo;s edit the VQL statement to enhance readability. To do this, press the small edit button at the top of the notebook. The default query will likely resemble something like this:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">/*
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Generic.Client.Info/BasicInformation
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>(artifact<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Generic.Client.Info/BasicInformation&#34;</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">50</span>
-</span></span></code></pre></div><p>If we look at the statement, we will see that the data source is not <code>info()</code> but instead <code>source()</code>, that&rsquo;s because it comes from a hunt collecting artefacts from multiple machines, and not a single run on a single machine.</p>
-<p>Now, to get an overview, lets change the VQL statement to:</p>
+</span></span></code></pre></div><p>If we examine the statement, we will observe that the data source is not <code>info()</code>; rather, it is <code>source()</code>. This is because it originates from a hunt collecting artefacts across multiple machines, rather than a single run on one machine.</p>
+<p>Now, to get an overview, let&rsquo;s change the VQL statement to:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> OS,Platform,PlatformVersion,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> OS
-</span></span></code></pre></div><p>The output is that we now have a row per OS version an a count of how many systems that have this OS:</p>
+</span></span></code></pre></div><p>The output is that we now have a row for each OS version and a count of how many systems have that OS:</p>
 <p><img src="/img/velothreathunt/20220704122946.png" alt=""></p>
-<p>As you can see, the VQL language is quite powerful, and will give the responder the ability to quickly collect data or to get an overview of data collected from hosts. In fact, all hunts in Velociraptor is actually VQL statements made to query systems for information.</p>
+<p>As you can see, the VQL language is quite powerful and provides the responder with the ability to quickly collect data or to gain an overview of the data collected from hosts. In fact, all hunts in Velociraptor are actually VQL statements made to query systems for information.</p>
 <h2 id="installing-artefacts-from-artifact-exchange">Installing artefacts from &lsquo;Artifact Exchange&rsquo;</h2>
-<p>There are a lot of artefacts already build in to Velociraptor, but a really neat feature of the whole Velociraptor universe is the <a href="https://docs.velociraptor.app/exchange/">Artifact Exchange</a>. The exchange is a collection of artefacts contributed by the community. This means that if you are using Velociraptor and make a really awesome query, that are not already part of the normal system you can submit it to the exchange and share with everyone else so they can benefit from it, and find even more bad stuff in environments.</p>
-<p>The &lsquo;Artifact Exchange&rsquo; needs to be imported in to the Velociraptor server. That can be done by running the artefact <code>Server.Import.ArtifactExchange</code> on the Velociraptor server itself - Go to the &lsquo;Server Artifact&rsquo; menu and create a new collection. From the drop down choose the <code>Server.Import.ArtifactExchange</code> artefact and press launch:</p>
+<p>There are many artefacts already built into Velociraptor, but a really neat feature of the entire Velociraptor universe is the <a href="https://docs.velociraptor.app/exchange/">Artifact Exchange</a>. The exchange is a collection of artefacts contributed by the community. This means that if you are using Velociraptor and make an amazing query that is not already part of the standard system, you can submit it to the exchange and share it with everyone else so they can benefit from it and discover even more interesting things in environments.</p>
+<p>The &lsquo;Artifact Exchange&rsquo; needs to be imported into the Velociraptor server. This can be done by running the artefact <code>Server.Import.ArtifactExchange</code> directly on the Velociraptor server. Navigate to the &lsquo;Server Artifact&rsquo; menu and create a new collection. From the dropdown menu, select the <code>Server.Import.ArtifactExchange</code> artefact and press launch:</p>
 <p><img src="/img/velothreathunt/20220704125408.png" alt="">
 <img src="/img/velothreathunt/20220704125501.png" alt=""></p>
-<p>All artefacts from the exchange are now imported in to the server and can now be used in hunts.</p>
+<p>All artifacts from the exchange are now imported into the server and can be used in hunts.</p>
 <h2 id="hunting">Hunting</h2>
-<p>Now that we have scratched the surface of VQL and how to use it in hunts, lets dig in to some of the more power usages of hunts and VQL in Velociraptor. This section is a collection of different hunts that I have found useful, and would like to share.</p>
+<p>Now that we have scratched the surface of VQL and how to use it in hunts, let’s delve into some of the more powerful applications of hunts and VQL in Velociraptor. This section is a collection of different hunts that I have found useful and would like to share.</p>
 <h3 id="finding-renamed-executables">Finding renamed executables</h3>
-<p>One thing we often see in cases is the usage of psexec or use of <a href="https://lolbas-project.github.io/">LOLBINs</a>, example: use of <code>rundll32.exe</code> to run a dll on the host. These methods are sometimes block by security programs to prevent threat actors from using them to run arbitrary code on the systems, and the threat actors therefore often find clever ways to circumvent detection. One of the ways is to copy the executable to another place.</p>
-<p>Example, lets say a threat actor is avoiding detection by renaming <code>rundll32.exe</code>  to <code>x.exe</code>, and moving the renamed file to <code>C:\tmp</code>. To find that using Velociraptor, we can use the artefacts called <code>Windows.Detection.BinaryRename</code>, which will search for executable and compare the binary metadata up against a predefined list (That you can add and remove from):</p>
+<p>One thing we often observe in cases is the use of psexec or the utilization of <a href="https://lolbas-project.github.io/">LOLBINs</a>, for example: employing <code>rundll32.exe</code> to execute a dll on the host. Security programs sometimes block these methods to prevent threat actors from executing arbitrary code on the systems, prompting them to discover ingenious ways to evade detection. One such method is copying the executable to another location.</p>
+<p>For example, let&rsquo;s say a threat actor is avoiding detection by renaming <code>rundll32.exe</code> to <code>x.exe</code> and moving the renamed file to <code>C:\tmp</code>. To find that using Velociraptor, we can use the artefacts called <code>Windows.Detection.BinaryRename</code>, which will search for executables and compare the binary metadata against a predefined list (which you can add to or remove from):</p>
 <p><img src="/img/velothreathunt/20220704131544.png" alt=""></p>
 <p>Results:</p>
 <p><img src="/img/velothreathunt/20220704131930.png" alt=""></p>
 <h3 id="finding-lateral-movement">Finding lateral movement</h3>
-<p>A key question in almost all investigations and hunts is: &lsquo;where did the threat actor go?&rsquo;, and to answer this (or get indication off) we can use the artefact <code>Windows.EventLogs-RDPAuth</code>.</p>
-<p>Even though the name indicates that Velociraptor will only search for RDP authentications, if we look a bit closer at the artefact, we will see in the description that it actually also looks at common logons such as 4624 type 3,7 and 10, which is not exclusively used for RDP authentication.</p>
-<p>As you can see, the output can be very noisy and hard to get an overview over:</p>
+<p>A key question in nearly all investigations and hunts is: &lsquo;Where did the threat actor go?&rsquo; To answer this question—or to obtain an indication—we can utilize the artefact <code>Windows.EventLogs-RDPAuth</code>.</p>
+<p>Although the name suggests that Velociraptor solely searches for RDP authentications, a closer look at the artifact reveals that its description indicates it also examines common logons, such as types 3, 7, and 10 of event 4624, which are not exclusively associated with RDP authentication.</p>
+<p>As you can see, the output can be quite noisy and difficult to grasp an overview of:</p>
 <p><img src="/img/velothreathunt/20220704133227.png" alt=""></p>
-<p>To narrow down the output, lets edit the VQL statement:</p>
+<p>To narrow down the output, let&rsquo;s edit the VQL statement:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> EventTime,Computer,Channel,EventID,UserName,LogonType,SourceIP,Description,Message,Fqdn <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> ( <span style="color:#f92672">//</span> excluded logons <span style="color:#66d9ef">of</span> the <span style="color:#66d9ef">user</span> <span style="color:#66d9ef">on</span> their own <span style="color:#66d9ef">system</span>
 </span></span><span style="display:flex;"><span>(UserName <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;suspect1&#34;</span> <span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;suspect1workstation&#34;</span>) 
@@ -196,11 +205,11 @@
 </span></span><span style="display:flex;"><span><span style="color:#f92672">//</span> Remove DCs, exchange <span style="color:#66d9ef">and</span> fileserver, since this <span style="color:#66d9ef">is</span> expected <span style="color:#66d9ef">to</span> have alot <span style="color:#66d9ef">of</span> logons
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> (Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;dc&#34;</span> <span style="color:#66d9ef">OR</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;exchange&#34;</span> <span style="color:#66d9ef">OR</span> Computer <span style="color:#f92672">=~</span> <span style="color:#e6db74">&#34;fs1&#34;</span>) 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> EventTime
-</span></span></code></pre></div><p>The output should be a more compact list of logons to other hosts from the patient zero user account, thereby giving the responder easier overview of where to investigate next.</p>
+</span></span></code></pre></div><p>The output should be a more concise list of logons to other hosts from the patient zero user account, providing the responder with an easier overview of where to investigate next.</p>
 <h3 id="getting-a-list-of-running-processes">Getting a list of running processes</h3>
-<p>An important thing to always have in mind when doing threathunts and investigations is &lsquo;How does normal look like?&rsquo;. Its always tough to answer that question as a consultant coming in to an environment, but Velociraptor can help in getting an overview of what&rsquo;s running on the systems.</p>
-<p>To get a list of running processes we can use the artefact <code>Windows.System.Pslist</code>.  The output will be quite big, and it will therefore make sense to do some sorting and stacking on the output.</p>
-<p>The following VQL query takes the output from the hunt, and only shows the unsigned binaries running on the systems:</p>
+<p>An important thing to always keep in mind when doing threat hunts and investigations is, &ldquo;What does normal look like?&rdquo; It’s always tough to answer that question as a consultant coming into an environment, but Velociraptor can help provide an overview of what&rsquo;s running on the systems.</p>
+<p>To obtain a list of running processes, we can use the artefact <code>Windows.System.Pslist</code>. The output will be quite large, so it makes sense to sort and stack the results.</p>
+<p>The following VQL query retrieves the output from the hunt and displays only the unsigned binaries running on the systems:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> Name,Exe,Commandline,Hash.SHA256 <span style="color:#66d9ef">AS</span> SHA256,Authenticode.<span style="color:#66d9ef">Trusted</span>,Username,Fqdn,<span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>()
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> Authenticode.<span style="color:#66d9ef">Trusted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;untrusted&#34;</span> <span style="color:#f92672">//</span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">only</span> unsigned binaries
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">AND</span> <span style="color:#66d9ef">NOT</span> Exe <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C:\\Path\\to\\whitelisted\\binary&#34;</span>
@@ -208,20 +217,20 @@
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> Exe
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
 </span></span></code></pre></div><h3 id="finding-files-across-the-network">Finding files across the network</h3>
-<p>The last artefact I would like to show is how to search for files. This can be useful if we already have a list of known IOCs with filenames that we would like to search for, or it could be we are just hunting for &lsquo;weird&rsquo; files. To search for files we can use the <code>Windows.Search.FileFinder</code>  artefact.</p>
-<p>As example lets do a search for DLL files in weird locations, that might help us find bad stuff. For the SearchFileGlobTable, we will add locations to look for:</p>
+<p>The last artefact I would like to show is how to search for files. This can be useful if we already have a list of known IOCs with filenames that we want to look for, or if we are simply hunting for &lsquo;weird&rsquo; files. To search for files, we can use the <code>Windows.Search.FileFinder</code> artefact.</p>
+<p>As an example, let’s search for DLL files in unusual locations that might help us find problematic items. For the SearchFileGlobTable, we will add locations to search for:</p>
 <pre tabindex="0"><code>C:\Windows\Tasks\*.dll
 C:\Windows\Temp\**\*.dll
 C:\*\*.dll
 C:\*.dll
 </code></pre><p><img src="/img/velothreathunt/20220704140415.png" alt=""></p>
-<p>The output can be very noisy, and we will therefore need to do some sorting in the VQL statement, which should make it a little bit easier to read:</p>
+<p>The output can be very noisy, and we will therefore need to sort in the VQL statement to make it a bit easier to read:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> Fqdn,FullPath,MTime <span style="color:#66d9ef">as</span> Modified,BTime <span style="color:#66d9ef">as</span> Created,IsDir, <span style="color:#66d9ef">count</span>() <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">Count</span> <span style="color:#66d9ef">FROM</span> <span style="color:#66d9ef">source</span>() <span style="color:#66d9ef">WHERE</span> IsDir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;false&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> FullPath
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#66d9ef">Count</span>
 </span></span></code></pre></div><h2 id="summary">Summary</h2>
-<p>As you can see, the Velociraptor agent can be used to do very power full and quick search the whole host landscape, and thereby making it easier for threat hunters and the like to find things that are out of the ordinary.</p>
-<p>I for more information about how to do hunts and creating queries in VQL, please see the Velociraptor <a href="https://docs.velociraptor.app/">documentation</a>.</p>
+<p>As you can see, the Velociraptor agent can be used to perform very powerful and quick searches across the entire host landscape, making it easier for threat hunters and others to identify things that are out of the ordinary.</p>
+<p>For more information about how to conduct hunts and create queries in VQL, please see the Velociraptor <a href="https://docs.velociraptor.app/">documentation</a>.</p>
 <h2 id="credit">Credit</h2>
 <p>Sources for this blog post comes from:</p>
 <ul>
@@ -255,7 +264,7 @@ C:\*.dll
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        1367 Words
+        1304 Words
       </p>
 
       <p>
@@ -271,8 +280,22 @@ C:\*.dll
 
          
           
+            
+              (Last updated: 2022-07-04 15:34)
+            
+          
         
       </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="3b43ad5410608a557fbaa847d6b330e31967230c" target="_blank" rel="noopener">3b43ad5</a>
+          @ 2022-07-04
+        </p>
     </div>
       <hr />
       <div class="sharing-buttons">
@@ -371,11 +394,6 @@ C:\*.dll
     
     <div class="pagination">
         
-        <div class="pagination__title">
-            <span class="pagination__title-h">Read other posts</span>
-            <hr />
-        </div>
-        
 
         <div class="pagination__buttons">
             
@@ -403,6 +421,8 @@ C:\*.dll
 
     
 
+    
+
   </main>
 
             </div>
@@ -412,7 +432,6 @@ C:\*.dll
     
     
 </footer>
-<a rel="me" href="https://infosec.exchange/@hackerkartellet"></a>
 
             
         </div>
@@ -421,8 +440,9 @@ C:\*.dll
 
 
 
-<script type="text/javascript" src="/bundle.min.bb2c6bc3ed452ca4759660e4020811f248bc2320081559e8a32d8b0092773852941133639d35e8370d03d3ddaa750b1edd6b343c5bd22a55d5bdeae8f648f49b.js" integrity="sha512-uyxrw&#43;1FLKR1lmDkAggR8ki8IyAIFVnooy2LAJJ3OFKUETNjnTXoNw0D092qdQse3Ws0PFvSKlXVvero9kj0mw=="></script>
-<script data-goatcounter="https://fiskeren.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script type="text/javascript" src="/bundle.min.e89fda0f29b95d33f6f4224dd9e5cf69d84aff3818be2b0d73e731689cc374261b016d17d46f8381962fb4a1577ba3017b1f23509d894f6e66431f988c00889e.js" integrity="sha512-6J/aDym5XTP29CJN2eXPadhK/zgYvisNc&#43;cxaJzDdCYbAW0X1G&#43;DgZYvtKFXe6MBex8jUJ2JT25mQx&#43;YjACIng=="></script>
+
+
 
 
     </body>

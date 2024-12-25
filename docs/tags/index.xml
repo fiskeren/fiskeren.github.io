@@ -4,54 +4,45 @@
     <title>Tags on fiskeren.github.io</title>
     <link>https://fiskeren.github.io/tags/</link>
     <description>Recent content in Tags on fiskeren.github.io</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-uk</language>
+    <generator>Hugo</generator>
+    <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 12 Aug 2022 17:28:43 +0100</lastBuildDate><atom:link href="https://fiskeren.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 13 Aug 2022 19:55:05 +0100</lastBuildDate>
+    <atom:link href="https://fiskeren.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>DFIR</title>
       <link>https://fiskeren.github.io/tags/dfir/</link>
       <pubDate>Fri, 12 Aug 2022 17:28:43 +0100</pubDate>
-      
       <guid>https://fiskeren.github.io/tags/dfir/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>geoip</title>
+      <title>Geoip</title>
       <link>https://fiskeren.github.io/tags/geoip/</link>
       <pubDate>Fri, 12 Aug 2022 17:28:43 +0100</pubDate>
-      
       <guid>https://fiskeren.github.io/tags/geoip/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Threathunting</title>
       <link>https://fiskeren.github.io/tags/threathunting/</link>
       <pubDate>Fri, 12 Aug 2022 17:28:43 +0100</pubDate>
-      
       <guid>https://fiskeren.github.io/tags/threathunting/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>forensics</title>
+      <title>Forensics</title>
       <link>https://fiskeren.github.io/tags/forensics/</link>
       <pubDate>Tue, 07 Jun 2022 16:30:11 +0100</pubDate>
-      
       <guid>https://fiskeren.github.io/tags/forensics/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>Deadhost investigation</title>
+      <title>Deadhost Investigation</title>
       <link>https://fiskeren.github.io/tags/deadhost-investigation/</link>
       <pubDate>Sun, 22 May 2022 09:45:02 +0100</pubDate>
-      
       <guid>https://fiskeren.github.io/tags/deadhost-investigation/</guid>
       <description></description>
     </item>
-    
   </channel>
 </rss>

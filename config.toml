@@ -2,8 +2,10 @@ baseURL = 'https://fiskeren.github.io'
 languageCode = 'en-uk'
 title = 'fiskeren.github.io'
 theme = 'hello-friend-ng'
-paginate     = 10
+#paginate     = 10
 publishDir = "docs"
+enableGitInfo = true
+
 
 [params]
   dateform        = "Jan 2, 2006"
@@ -12,7 +14,7 @@ publishDir = "docs"
   dateformNumTime = "2006-01-02 15:04"
 
   # Subtitle for home
-  homeSubtitle = "Simple blog made by Asger S."
+  homeSubtitle = "Simple blog made by Asger Strunk"
 
   # Set disableReadOtherPosts to true in order to hide the links to other posts.
   disableReadOtherPosts = false
@@ -21,7 +23,7 @@ publishDir = "docs"
   enableSharingButtons = true
 
   # Metadata mostly used in document's head
-  description = "Blog made by Asger S."
+  description = "Blog made by Asger Strunk"
   keywords = "blog, dfir, forensics, incident, response, incident response"
   images = [""]
 
@@ -33,13 +35,13 @@ publishDir = "docs"
 [languages]
   [languages.en]
     title = "fiskeren.github.io"
-    subtitle = "Technical blog made by Asger S."
+    subtitle = "Technical blog made by Asger Strunk"
     keywords = ""
     copyright = '<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
     readOtherPosts = "Read other posts"
 
     [languages.en.params.logo]
-      logoText = "Asger S. - fiskeren.github.io"
+      logoText = "Asger Strunk - fiskeren.github.io"
       logoHomeLink = ""
     # or
     #
