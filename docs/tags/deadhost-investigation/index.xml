@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Deadhost Investigation on fiskeren.github.io</title>
-    <link>https://fiskeren.github.io/tags/deadhost-investigation/</link>
+    <link>http://localhost:1313/tags/deadhost-investigation/</link>
     <description>Recent content in Deadhost Investigation on fiskeren.github.io</description>
     <generator>Hugo</generator>
     <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Mon, 23 May 2022 17:17:33 +0100</lastBuildDate>
-    <atom:link href="https://fiskeren.github.io/tags/deadhost-investigation/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/deadhost-investigation/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Deadhost Investigation and Super Timeline</title>
-      <link>https://fiskeren.github.io/posts/deadhostinvestigation/</link>
+      <link>http://localhost:1313/posts/deadhostinvestigation/</link>
       <pubDate>Sun, 22 May 2022 09:45:02 +0100</pubDate>
-      <guid>https://fiskeren.github.io/posts/deadhostinvestigation/</guid>
+      <guid>http://localhost:1313/posts/deadhostinvestigation/</guid>
       <description>&lt;p&gt;I recently attended a &lt;a href=&#34;https://www.sans.org/cyber-security-courses/advanced-incident-response-threat-hunting-training/&#34;&gt;SANS 508&lt;/a&gt; course and got time to play around with &lt;a href=&#34;https://docs.velociraptor.app/&#34;&gt;Velociraptor&lt;/a&gt;, which is an awesome DFIR tool made to efficiently get visibility into endpoints. It can be run in a server/agent setup, essentially working as an EDR with thousands of hosts, and it can also be used as a standalone artifact collector.&lt;/p&gt;&#xA;&lt;p&gt;In this post, I&amp;rsquo;ll try to explain how to use the Velociraptor executable as a artefact collector to quickly collect Windows artefacts from a dead host image. After collecting the artefacts, I will show how to create a super timeline using &lt;a href=&#34;https://plaso.readthedocs.io/en/latest/sources/user/Using-log2timeline.html&#34;&gt;Plaso log2timeline&lt;/a&gt; from the evidence collected.&lt;/p&gt;</description>
     </item>
   </channel>
